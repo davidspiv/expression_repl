@@ -92,14 +92,16 @@ void getInput(string &input) {
 
     } else if (isDisplayable(ch)) {  // handle displayable character
 
+
       input.insert(cursorIndex, string(1, ch));
       if (!algNotation.empty()) {
         freshInput += algNotation.at(targetIndex).getSymbol();
         algNotation.erase(algNotation.begin() + targetIndex);
       }
-      charCount++;
-      if (charCount < 0) {
-        freshInput.insert(freshInput.end() + charCount, input.at(cursorIndex));
+
+      if (charCount) {
+        freshInput.insert(freshInput.begin() - charCount,
+                          input.at(cursorIndex));
       } else {
         freshInput.push_back(input.at(cursorIndex));
       }
