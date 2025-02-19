@@ -23,8 +23,6 @@ const string handleInput(string& input) {
   char ch;
   input = "";
 
-  cout << ">  " << flush;
-
   while (readNextChar(ch) && ch != '\n') {
     result = "";
 
@@ -84,7 +82,7 @@ int main() {
   struct termios terminalSettings;
   string input;
 
-  cout << "Enter Expression. Type 'exit' to quit." << '\n';
+  cout << "Enter Expression. Type 'exit' to quit." << '\n' << ">  " << flush;
 
   setNonCanonicalMode(terminalSettings);
 
