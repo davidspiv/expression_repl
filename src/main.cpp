@@ -14,24 +14,20 @@
 using namespace std;
 
 bool isDisplayable(char ch) {
-  return isNumeric(ch) || isalpha(ch) ||
-         opRank.find(string(1, ch)) != opRank.end();
+  return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch));
 }
 
-void getInput(string &input) {
-  char ch;
-  size_t cursorIndex = 0;
+string getInput() {
   vector<Token> algNotation;
-
-  input = "";
-
-  displayInput(input, input, cursorIndex);
+  size_t cursorIndex = 0;
+  string input = "";
+  char ch;
 
   while (readNextChar(ch) && ch != '\n') {
     string freshInput = "";
     int targetIndex = algNotation.size() - 1;
-
     int charCount = input.length() - cursorIndex;
+    bool atTokenStart = false;
 
     // Token tokenA;
     // Token tokenB;
@@ -41,10 +37,14 @@ void getInput(string &input) {
 
       if (charCount > 0) {
         targetIndex--;
+      } else {
+        atTokenStart = true;
       }
     }
 
-    if (ch == '\033') {  // Handle ANSI escape codes
+    if (ch == '\033') {
+      // HANDLE ANSI ESCAPE SEQUENCE
+
       char escCode[2];
 
       if (readNextChar(escCode[0]) && readNextChar(escCode[1]) &&
@@ -66,9 +66,8 @@ void getInput(string &input) {
         }
       }
       continue;
-    }
-
-    if (ch == 0x7F && cursorIndex) {  // Handle backspace
+    } else if (ch == 0x7F && cursorIndex) {
+      // HANDLE BACKSPACE
 
       size_t length = algNotation.at(targetIndex).length();
 
@@ -90,8 +89,8 @@ void getInput(string &input) {
         algNotation.pop_back();  // remove tokens touching cursor
       }
 
-    } else if (isDisplayable(ch)) {  // handle displayable character
-
+    } else if (isDisplayable(ch)) {
+      // HANDLE DISPLAYABLE CHARACTER
 
       input.insert(cursorIndex, string(1, ch));
       if (!algNotation.empty()) {
@@ -99,7 +98,7 @@ void getInput(string &input) {
         algNotation.erase(algNotation.begin() + targetIndex);
       }
 
-      if (charCount) {
+      if (charCount || atTokenStart) {
         freshInput.insert(freshInput.begin() - charCount,
                           input.at(cursorIndex));
       } else {
@@ -116,18 +115,19 @@ void getInput(string &input) {
 
     displayInput(input, freshInput, cursorIndex);
   }
+  return input;
 };
 
 int main() {
   struct termios terminalSettings;
   string input;
 
-  cout << "Enter Expression. Type 'exit' to quit." << endl;
+  cout << "Enter Expression. Type 'exit' to quit." << '\n' << ">  " << flush;
 
   setNonCanonicalMode(terminalSettings);
 
   while (input != "exit") {
-    getInput(input);
+    input = getInput();
     displayResult(input);
   }
 

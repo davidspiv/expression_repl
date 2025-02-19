@@ -17,7 +17,7 @@ bool isNegateOp(std::deque<Token> &tokens) {
                             tokens.back().getSymbol() != ")");
 }
 
-const TokensResult lexer(std::string &input) {
+const TokensResult lexer(const std::string &input) {
   std::deque<Token> tokens;
   std::string valueBuff = "";
   std::string opSymbolBuff = "";

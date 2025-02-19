@@ -4,7 +4,7 @@
 
 #include "tokensResult.h"
 
-const TokensResult lexer(std::string &input);
+const TokensResult lexer(const std::string &input);
 
 bool isNumeric(const char symbol);
 
