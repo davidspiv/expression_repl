@@ -1,9 +1,6 @@
 #include "../include/lexer.h"
 
-#include <algorithm>
-#include <deque>
 #include <iostream>
-#include <optional>
 #include <string>
 
 #include "../include/token.h"
@@ -17,12 +14,10 @@ bool isNegateOp(std::deque<Token> &tokens) {
                             tokens.back().getSymbol() != ")");
 }
 
-const TokensResult lexer(const std::string &input) {
+ TokensResult lexer(const std::string &input) {
   std::deque<Token> tokens;
   std::string valueBuff = "";
   std::string opSymbolBuff = "";
-
-  //   reverse(input.begin(), input.end());
 
   for (char symbol : input) {
     const std::string symbolAsString = std::string(1, symbol);

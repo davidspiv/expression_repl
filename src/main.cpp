@@ -1,13 +1,12 @@
-#include <unistd.h>
-
-#include <algorithm>
+#include <deque>
 #include <iostream>
-#include <optional>
 #include <string>
-#include <vector>
+// #include <exception>
 
+#include "../include/evalRpnNotation.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
+#include "../include/shuntingYard.h"
 #include "../include/token.h"
 #include "../include/tokensResult.h"
 
@@ -18,32 +17,14 @@ bool isDisplayable(char ch) {
 }
 
 string getInput() {
-  vector<Token> algNotation;
+  deque<Token> algNotation;
   size_t cursorIndex = 0;
   string input = "";
+  string result = "";
   char ch;
 
   while (readNextChar(ch) && ch != '\n') {
-    string freshInput = "";
-    int targetIndex = algNotation.size() - 1;
-    int charCount = input.length() - cursorIndex;
-    bool atTokenStart = false;
-
-    // Token tokenA;
-    // Token tokenB;
-
-    while (charCount > 0) {
-      charCount -= algNotation.at(targetIndex).length();
-
-      if (charCount > 0) {
-        targetIndex--;
-      } else {
-        atTokenStart = true;
-      }
-    }
-
-    if (ch == '\033') {
-      // HANDLE ANSI ESCAPE SEQUENCE
+    if (ch == '\033') {  // handle ANSI escape sequence
 
       char escCode[2];
 
@@ -66,54 +47,32 @@ string getInput() {
         }
       }
       continue;
-    } else if (ch == 0x7F && cursorIndex) {
-      // HANDLE BACKSPACE
 
-      size_t length = algNotation.at(targetIndex).length();
-
+    } else if (ch == 0x7F && cursorIndex) {  // handle backspace
       cout << "\b \b";
       cursorIndex--;
       input.pop_back();
 
-      if (length > 1) {
-        freshInput =
-            algNotation.at(targetIndex).getSymbol().substr(0, length - 1);
-      }
-
-      algNotation.erase(algNotation.begin() +
-                        targetIndex);  // remove deleted token
-
-      if (freshInput.empty() && !algNotation.empty()) {
-        freshInput = algNotation.at(targetIndex - 1).getSymbol();
-
-        algNotation.pop_back();  // remove tokens touching cursor
-      }
-
-    } else if (isDisplayable(ch)) {
-      // HANDLE DISPLAYABLE CHARACTER
-
+    } else if (isDisplayable(ch)) {  // handle character to display
       input.insert(cursorIndex, string(1, ch));
-      if (!algNotation.empty()) {
-        freshInput += algNotation.at(targetIndex).getSymbol();
-        algNotation.erase(algNotation.begin() + targetIndex);
-      }
-
-      if (charCount || atTokenStart) {
-        freshInput.insert(freshInput.begin() - charCount,
-                          input.at(cursorIndex));
-      } else {
-        freshInput.push_back(input.at(cursorIndex));
-      }
       cursorIndex++;
     }
 
-    const TokensResult tokensResult = lexer(freshInput);
+    TokensResult tokensResult = lexer(input);
 
     for (size_t i = 0; i < tokensResult.tokens.size(); i++) {
       algNotation.push_back(tokensResult.tokens[i]);
     }
 
-    displayInput(input, freshInput, cursorIndex);
+    try {
+      std::deque<Token> rpnNotation = shuntingYard(algNotation);
+      result = to_string(evalRpnNotation(rpnNotation));
+
+    } catch (const std::exception& e) {
+      //   std::cerr << e.what() << '\n';
+    }
+
+    displayInput(input, result, cursorIndex);
   }
   return input;
 };
