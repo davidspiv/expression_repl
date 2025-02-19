@@ -51,7 +51,5 @@ void displayInput(const string &input, const string &result,
 }
 
 void displayResult(const string &result) {
-  cout << '\n'
-       << YELLOW << CLEAR << stod(result) << WHITE << '\n'
-       << ">  " << flush;
+  cout << '\n' << YELLOW << CLEAR << stod(result) << WHITE << '\n';
 }

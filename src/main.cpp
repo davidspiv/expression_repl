@@ -23,6 +23,8 @@ const string handleInput(string& input) {
   char ch;
   input = "";
 
+  cout << ">  " << flush;
+
   while (readNextChar(ch) && ch != '\n') {
     result = "";
 
@@ -53,18 +55,19 @@ const string handleInput(string& input) {
     } else if (ch == 0x7F && cursorIndex) {  // handle backspace
       cout << "\b \b";
       cursorIndex--;
-      input.pop_back();
+      input.erase(input.begin() + cursorIndex);
 
     } else if (isDisplayable(ch)) {  // handle character to display
       input.insert(cursorIndex, string(1, ch));
       cursorIndex++;
     }
     if (input.length()) {
-      deque<Token> algNotation = lexer(input);
-
       try {
-        std::deque<Token> rpnNotation = shuntingYard(algNotation);
-        result = to_string(evalRpnNotation(rpnNotation));
+        deque<Token> algNotation = lexer(input);
+        if (!algNotation.empty()) {
+          std::deque<Token> rpnNotation = shuntingYard(algNotation);
+          result = to_string(evalRpnNotation(rpnNotation));
+        }
 
       } catch (const std::exception& e) {
         //   std::cerr << e.what() << '\n';

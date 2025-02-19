@@ -40,11 +40,10 @@ std::deque<Token> lexer(const std::string &input) {
       if (opSymbolBuff.length() < 3) {
         continue;
       }
-      // if (opRank.find(opSymbolBuff) == opRank.end()) {
-      //   throw std::invalid_argument("unrecognized function \"" + opSymbolBuff
-      //   +
-      //                               "\".");
-      // }
+      if (!opRank.count(opSymbolBuff)) {
+        throw std::invalid_argument("unrecognized function \"" + opSymbolBuff +
+                                    "\".");
+      }
     }
 
     // create non-numeric token
