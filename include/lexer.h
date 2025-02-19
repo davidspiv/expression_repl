@@ -1,10 +1,11 @@
 
+#include <deque>
 #include <string>
 #include <unordered_map>
 
-#include "tokensResult.h"
+#include "token.h"
 
- TokensResult lexer(const std::string &input);
+std::deque<Token> lexer(const std::string &input);
 
 bool isNumeric(const char symbol);
 

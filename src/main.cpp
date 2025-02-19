@@ -13,17 +13,19 @@
 using namespace std;
 
 bool isDisplayable(char ch) {
-  return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch));
+  return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
+         ch == ')';
 }
 
-string getInput() {
-  deque<Token> algNotation;
+const string handleInput(string& input) {
   size_t cursorIndex = 0;
-  string input = "";
-  string result = "";
+  string result;
   char ch;
+  input = "";
 
   while (readNextChar(ch) && ch != '\n') {
+    result = "";
+
     if (ch == '\033') {  // handle ANSI escape sequence
 
       char escCode[2];
@@ -57,37 +59,35 @@ string getInput() {
       input.insert(cursorIndex, string(1, ch));
       cursorIndex++;
     }
+    if (input.length()) {
+      deque<Token> algNotation = lexer(input);
 
-    TokensResult tokensResult = lexer(input);
+      try {
+        std::deque<Token> rpnNotation = shuntingYard(algNotation);
+        result = to_string(evalRpnNotation(rpnNotation));
 
-    for (size_t i = 0; i < tokensResult.tokens.size(); i++) {
-      algNotation.push_back(tokensResult.tokens[i]);
-    }
-
-    try {
-      std::deque<Token> rpnNotation = shuntingYard(algNotation);
-      result = to_string(evalRpnNotation(rpnNotation));
-
-    } catch (const std::exception& e) {
-      //   std::cerr << e.what() << '\n';
+      } catch (const std::exception& e) {
+        //   std::cerr << e.what() << '\n';
+      }
     }
 
     displayInput(input, result, cursorIndex);
   }
-  return input;
+
+  return result;
 };
 
 int main() {
   struct termios terminalSettings;
   string input;
 
-  cout << "Enter Expression. Type 'exit' to quit." << '\n' << ">  " << flush;
+  cout << "Enter Expression. Type 'exit' to quit." << '\n';
 
   setNonCanonicalMode(terminalSettings);
 
   while (input != "exit") {
-    input = getInput();
-    displayResult(input);
+    const string result = handleInput(input);
+    displayResult(result);
   }
 
   restoreCanonicalMode(terminalSettings);

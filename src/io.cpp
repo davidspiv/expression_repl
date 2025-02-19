@@ -33,7 +33,7 @@ void displayInput(const string &input, const string &result,
   ostringstream out;
 
   if (!result.empty()) {
-    out << '\n' << CLEAR << GREY << result << WHITE << PREV_LINE;
+    out << '\n' << CLEAR << GREY << stod(result) << WHITE << PREV_LINE;
 
     isSecondLine = true;
 
@@ -51,5 +51,7 @@ void displayInput(const string &input, const string &result,
 }
 
 void displayResult(const string &result) {
-  cout << '\n' << YELLOW << CLEAR << result << WHITE << '\n';
+  cout << '\n'
+       << YELLOW << CLEAR << stod(result) << WHITE << '\n'
+       << ">  " << flush;
 }

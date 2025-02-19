@@ -1,10 +1,10 @@
 #include "../include/lexer.h"
 
+#include <deque>
 #include <iostream>
 #include <string>
 
 #include "../include/token.h"
-#include "../include/tokensResult.h"
 
 bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
 
@@ -14,7 +14,7 @@ bool isNegateOp(std::deque<Token> &tokens) {
                             tokens.back().getSymbol() != ")");
 }
 
- TokensResult lexer(const std::string &input) {
+std::deque<Token> lexer(const std::string &input) {
   std::deque<Token> tokens;
   std::string valueBuff = "";
   std::string opSymbolBuff = "";
@@ -74,5 +74,5 @@ bool isNegateOp(std::deque<Token> &tokens) {
     tokens.push_back(Token(valueBuff, Token::Value));
   }
 
-  return {tokens, ""};
+  return tokens;
 }
