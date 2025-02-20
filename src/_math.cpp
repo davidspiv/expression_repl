@@ -11,7 +11,7 @@ double _abs(double value) { return value >= 0 ? value : -value; }
 double normalize(double x) { return x - _floor(x / M_PI) * M_PI; }
 
 double newtonsMethodRad(int index, double radicand) {
-  double guess = radicand / index;  // Better initial guess
+  double guess = radicand / index;  
   double delta;
 
   do {
