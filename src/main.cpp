@@ -1,9 +1,9 @@
 #include <deque>
 #include <iostream>
 #include <string>
-// #include <exception>
 
 #include "../include/evalRpnNotation.h"
+#include "../include/historyCache.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
 #include "../include/shuntingYard.h"
@@ -11,6 +11,8 @@
 #include "../include/tokensResult.h"
 
 using namespace std;
+
+static HistoryCache historyCache;
 
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
@@ -33,6 +35,17 @@ const string handleInput(string& input) {
       if (readNextChar(escCode[0]) && readNextChar(escCode[1]) &&
           escCode[0] == '[') {
         switch (escCode[1]) {
+          case 'A':
+            historyCache.moveBackward();
+            input = historyCache.getCurrent();
+            cursorIndex = input.length();
+            break;
+
+          case 'B':
+            historyCache.moveForward();
+            input = historyCache.getCurrent();
+            cursorIndex = input.length();
+            break;
           case 'D':
             if (cursorIndex) {
               cout << CURSOR_LEFT << flush;
@@ -48,7 +61,6 @@ const string handleInput(string& input) {
             break;
         }
       }
-      continue;
 
     } else if (ch == 0x7F && cursorIndex) {  // handle backspace
       cout << "\b \b";
@@ -74,6 +86,11 @@ const string handleInput(string& input) {
 
     displayInput(input, result, cursorIndex);
   }
+
+  if (historyCache.isBeginning() || historyCache.getCurrent() != input) {
+    historyCache.addEntry(input);
+  }
+  historyCache.beginning();
 
   return result;
 };

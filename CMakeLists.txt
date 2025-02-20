@@ -10,8 +10,8 @@ file(GLOB SOURCES src/*.cpp)
 # Create an executable
 add_executable(expressionRepl ${SOURCES})
 
-# Include the src/ directory for headers
-target_include_directories(expressionRepl PRIVATE src)
+# Include directories for headers
+target_include_directories(expressionRepl PRIVATE include)
 
 # Enable warnings
 target_compile_options(expressionRepl PRIVATE -Wall -Wextra -Wpedantic)
