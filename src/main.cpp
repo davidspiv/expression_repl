@@ -14,7 +14,7 @@ using namespace std;
 
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
-         ch == ')';
+         ch == ')' || ch == ' ';
 }
 
 const string handleInput(string& input) {
@@ -93,5 +93,5 @@ int main() {
 
   restoreCanonicalMode(terminalSettings);
 
-  cout << "Successfully exited" << endl;
+  cout << endl << "Successfully exited" << endl;
 }

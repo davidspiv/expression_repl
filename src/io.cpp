@@ -5,9 +5,8 @@
 
 #include <iostream>
 #include <sstream>
-using namespace std;
 
-bool isSecondLine = false;
+using namespace std;
 
 void setNonCanonicalMode(struct termios &initialSettings) {
   struct termios newSettings;
@@ -27,6 +26,8 @@ void restoreCanonicalMode(const struct termios &initialSettings) {
 }
 
 bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
+
+static bool isSecondLine = false;
 
 void displayInput(const string &input, const string &result,
                   size_t cursorIndex) {
@@ -56,4 +57,5 @@ void displayResult(const string &result) {
          << YELLOW << CLEAR << stod(result) << WHITE << '\n'
          << ">  " << flush;
   }
+  isSecondLine = false;
 }
