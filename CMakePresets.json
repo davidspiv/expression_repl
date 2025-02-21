@@ -40,7 +40,13 @@
 	"testPresets": [
 		{
 			"name": "test-debug",
+			"description": "Run tests in Debug mode",
 			"configurePreset": "wsl-debug"
+		},
+		{
+			"name": "test-release",
+			"description": "Run tests in Release mode",
+			"configurePreset": "wsl-release"
 		}
 	]
 }
