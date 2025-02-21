@@ -20,3 +20,12 @@ target_compile_options(expressionRepl PRIVATE -c -g -Wall -std=c++17 -fpermissiv
 set_target_properties(expressionRepl PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
+
+# Enables CTest
+enable_testing()
+
+# Add a test executable
+# add_executable(MyProjectTests tests/test_main.cpp)
+
+# Register it with CTest
+# add_test(NAME MyProjectTests COMMAND MyProjectTests)
