@@ -3,8 +3,9 @@
 
 #include <deque>
 
+#include "result.h"
 #include "token.h"
 
-std::deque<Token> shuntingYard(std::deque<Token> inputQueue);
+TokensResult shuntingYard(std::deque<Token> inputQueue);
 
 #endif

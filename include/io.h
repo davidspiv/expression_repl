@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "result.h"
+
 #define CLEAR "\033[0K"
 #define GREY "\033[38;5;8m"
 #define YELLOW "\033[33m"
@@ -16,7 +18,7 @@
 void setNonCanonicalMode(struct termios &initialSettings);
 void restoreCanonicalMode(const struct termios &initialSettings);
 bool readNextChar(char &ch);
-void displayInput(const std::string &input, const std::string &result,
+void displayInput(const std::string &input, const StringResult &result,
                   size_t cursorIndex);
 void displayResult(const std::string &result);
 

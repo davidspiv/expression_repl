@@ -20,9 +20,11 @@ void HistoryCache::moveBackward() {
   }
 }
 
-void HistoryCache::beginning() { iter = history.end(); }
+void HistoryCache::end() { iter = history.end(); }
 
-bool HistoryCache::isBeginning() { return iter == history.end(); }
+bool HistoryCache::isEnd() { return iter == history.end(); }
+
+bool HistoryCache::isBeginning() { return iter == history.begin(); }
 
 bool HistoryCache::empty() { return history.empty(); }
 

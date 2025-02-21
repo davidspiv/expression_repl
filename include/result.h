@@ -1,5 +1,5 @@
-#ifndef TOKENRESULT_H
-#define TOKENRESULT_H
+#ifndef RESULT_H
+#define RESULT_H
 #include <deque>
 #include <string>
 
@@ -7,6 +7,11 @@
 
 struct TokensResult {
   std::deque<Token> tokens;
+  std::string errMessage;
+};
+
+struct StringResult {
+  std::string str;
   std::string errMessage;
 };
 

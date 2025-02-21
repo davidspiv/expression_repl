@@ -14,7 +14,7 @@ add_executable(expressionRepl ${SOURCES})
 target_include_directories(expressionRepl PRIVATE include)
 
 # Enable warnings
-target_compile_options(expressionRepl PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options(expressionRepl PRIVATE -c -g -Wall -std=c++17 -fpermissive)
 
 # Set the output directory to the top-level project folder
 set_target_properties(expressionRepl PROPERTIES

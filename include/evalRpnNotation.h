@@ -3,8 +3,9 @@
 
 #include <deque>
 
+#include "result.h"
 #include "token.h"
 
-double evalRpnNotation(std::deque<Token> &rpnNotation);
+StringResult evalRpnNotation(std::deque<Token> &rpnNotation);
 
 #endif

@@ -6,9 +6,9 @@
 #include "../include/historyCache.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
+#include "../include/result.h"
 #include "../include/shuntingYard.h"
 #include "../include/token.h"
-#include "../include/tokensResult.h"
 
 using namespace std;
 
@@ -19,14 +19,21 @@ bool isDisplayable(char ch) {
          ch == ')' || ch == ' ';
 }
 
-const string handleInput(string& input) {
+string handleInput(string& input) {
   size_t cursorIndex = 0;
-  string result;
+  StringResult result;
   char ch;
   input = "";
 
+  // TEST
+  if (historyCache.empty()) {
+    historyCache.addEntry("1*1");
+    historyCache.addEntry("2*2");
+    historyCache.addEntry("3*3");
+  }
+
   while (readNextChar(ch) && ch != '\n') {
-    result = "";
+    result.str = "";
 
     if (ch == '\033') {  // handle ANSI escape sequence
 
@@ -35,17 +42,18 @@ const string handleInput(string& input) {
       if (readNextChar(escCode[0]) && readNextChar(escCode[1]) &&
           escCode[0] == '[') {
         switch (escCode[1]) {
-          case 'A':
+          case 'A':  // up arrow
             historyCache.moveBackward();
             input = historyCache.getCurrent();
             cursorIndex = input.length();
             break;
 
-          case 'B':
+          case 'B':  // down arrow
+          {
             historyCache.moveForward();
             input = historyCache.getCurrent();
             cursorIndex = input.length();
-            break;
+          } break;
           case 'D':
             if (cursorIndex) {
               cout << CURSOR_LEFT << flush;
@@ -71,28 +79,30 @@ const string handleInput(string& input) {
       input.insert(cursorIndex, string(1, ch));
       cursorIndex++;
     }
-    if (input.length()) {
-      try {
-        deque<Token> algNotation = lexer(input);
-        if (!algNotation.empty()) {
-          std::deque<Token> rpnNotation = shuntingYard(algNotation);
-          result = to_string(evalRpnNotation(rpnNotation));
-        }
 
-      } catch (const std::exception& e) {
-        //   std::cerr << e.what() << '\n';
+    if (!input.empty()) {
+      TokensResult algResult = lexer(input);
+      Token::Type lastTokenType = algResult.tokens.back().getType();
+
+      if (algResult.errMessage.empty() && lastTokenType != Token::BinaryOp &&
+          lastTokenType != Token::UnaryOp) {
+        TokensResult rpnResult = shuntingYard(algResult.tokens);
+
+        if (rpnResult.errMessage.empty()) {
+          result = evalRpnNotation(rpnResult.tokens);
+        }
       }
     }
 
     displayInput(input, result, cursorIndex);
   }
 
-  if (historyCache.isBeginning() || historyCache.getCurrent() != input) {
+  if (historyCache.isEnd() || historyCache.getCurrent() != input) {
     historyCache.addEntry(input);
   }
-  historyCache.beginning();
+  historyCache.end();
 
-  return result;
+  return result.str;
 };
 
 int main() {

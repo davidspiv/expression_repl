@@ -3,10 +3,11 @@
 #include <stack>
 
 #include "../include/_math.h"
+#include "../include/result.h"
 #include "../include/taylorSeries.h"
 #include "../include/token.h"
 
-double evalRpnNotation( std::deque<Token> &rpnNotation) {
+StringResult evalRpnNotation(std::deque<Token> &rpnNotation) {
   std::stack<double> result;
 
   for (Token &token : rpnNotation) {
@@ -18,8 +19,8 @@ double evalRpnNotation( std::deque<Token> &rpnNotation) {
 
     // handle unary operators
     if (result.empty()) {
-      throw std::invalid_argument("invalid expression involving operator \"" +
-                                  token.getSymbol() + " \".");
+      return {0, "invalid expression involving operator \"" +
+                     token.getSymbol() + "\"."};
     }
     const double operandB = result.top();
     result.pop();
@@ -37,8 +38,8 @@ double evalRpnNotation( std::deque<Token> &rpnNotation) {
 
     // handle binary operators
     if (result.empty()) {
-      throw std::invalid_argument("invalid expression involving operator \"" +
-                                  token.getSymbol() + "\".");
+      return {0, "invalid expression involving operator \"" +
+                     token.getSymbol() + "\"."};
     }
 
     const double operandA = result.top();
@@ -63,5 +64,5 @@ double evalRpnNotation( std::deque<Token> &rpnNotation) {
       result.push(operandA / operandB);
     }
   }
-  return result.top();
+  return {std::to_string(result.top()), ""};
 }

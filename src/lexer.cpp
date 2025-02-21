@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "../include/result.h"
 #include "../include/token.h"
 
 bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
@@ -14,7 +15,7 @@ bool isNegateOp(std::deque<Token> &tokens) {
                             tokens.back().getSymbol() != ")");
 }
 
-std::deque<Token> lexer(const std::string &input) {
+TokensResult lexer(const std::string &input) {
   std::deque<Token> tokens;
   std::string valueBuff = "";
   std::string opSymbolBuff = "";
@@ -41,8 +42,7 @@ std::deque<Token> lexer(const std::string &input) {
         continue;
       }
       if (!opRank.count(opSymbolBuff)) {
-        throw std::invalid_argument("unrecognized function \"" + opSymbolBuff +
-                                    "\".");
+        return {tokens, "unrecognized function \"" + opSymbolBuff + "\"."};
       }
     }
 
@@ -64,8 +64,7 @@ std::deque<Token> lexer(const std::string &input) {
       tokens.push_back(Token(symbolAsString, Token::BinaryOp));
 
     } else if (symbol != ' ') {
-      throw std::invalid_argument("unrecognized symbol \"" + symbolAsString +
-                                  "\".");
+      return {tokens, "unrecognized symbol \"" + symbolAsString + "\"."};
     }
   }
 
@@ -73,5 +72,6 @@ std::deque<Token> lexer(const std::string &input) {
     tokens.push_back(Token(valueBuff, Token::Value));
   }
 
-  return tokens;
+  // if the opSymbol buffer is full, send that as an error message
+  return {tokens, opSymbolBuff};
 }

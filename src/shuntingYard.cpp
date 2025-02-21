@@ -3,6 +3,7 @@
 #include <stack>
 
 #include "../include/_math.h"
+#include "../include/result.h"
 #include "../include/token.h"
 
 size_t safePeekTop(std::stack<Token> &opStack) {
@@ -12,7 +13,7 @@ size_t safePeekTop(std::stack<Token> &opStack) {
   return 0;
 }
 
-std::deque<Token> shuntingYard(std::deque<Token> inputQueue) {
+TokensResult shuntingYard(std::deque<Token> inputQueue) {
   std::stack<Token> opStack;
   std::deque<Token> outputQueue;
 
@@ -26,13 +27,13 @@ std::deque<Token> shuntingYard(std::deque<Token> inputQueue) {
     // flush opStack until matching parenthesis is reached
     if (token.getSymbol() == ")") {
       if (opStack.empty()) {
-        throw std::invalid_argument("mismatched parentheses.");
+        return {outputQueue, "mismatched parentheses."};
       }
       while (opStack.top().getSymbol() != "(") {
         outputQueue.push_back(opStack.top());
         opStack.pop();
         if (opStack.empty()) {
-          throw std::invalid_argument("mismatched parentheses.");
+          return {outputQueue, "mismatched parentheses."};
         }
       }
       opStack.pop();  // remove open parenthesis
@@ -59,11 +60,11 @@ std::deque<Token> shuntingYard(std::deque<Token> inputQueue) {
   // flush remaining operators
   while (!opStack.empty()) {
     if (opStack.top().getType() == Token::Parenthesis) {
-      throw std::invalid_argument("mismatched parentheses.");
+      return {outputQueue, "mismatched parentheses."};
     }
     outputQueue.push_back(opStack.top());
     opStack.pop();
   }
 
-  return outputQueue;
+  return {outputQueue, ""};
 }

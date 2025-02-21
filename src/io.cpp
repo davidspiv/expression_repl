@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "../include/result.h"
+
 using namespace std;
 
 void setNonCanonicalMode(struct termios &initialSettings) {
@@ -29,12 +31,12 @@ bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
 
 static bool isSecondLine = false;
 
-void displayInput(const string &input, const string &result,
+void displayInput(const string &input, const StringResult &result,
                   size_t cursorIndex) {
   ostringstream out;
 
-  if (!result.empty()) {
-    out << '\n' << CLEAR << GREY << stod(result) << WHITE << PREV_LINE;
+  if (!result.str.empty() && result.errMessage.empty()) {
+    out << '\n' << CLEAR << GREY << stod(result.str) << WHITE << PREV_LINE;
 
     isSecondLine = true;
 

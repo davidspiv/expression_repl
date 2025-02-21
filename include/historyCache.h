@@ -13,7 +13,9 @@ class HistoryCache {
 
   void moveBackward();
 
-  void beginning();
+  void end();
+
+  bool isEnd();
 
   bool isBeginning();
 

@@ -4,8 +4,9 @@
 #include <unordered_map>
 
 #include "token.h"
+#include "result.h"
 
-std::deque<Token> lexer(const std::string &input);
+TokensResult lexer(const std::string &input);
 
 bool isNumeric(const char symbol);
 
