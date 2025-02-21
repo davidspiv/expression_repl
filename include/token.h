@@ -16,8 +16,10 @@ class Token {
   Token(const std::string &a, const Type &b) : symbol(a), type(b) {};
   ~Token() {};
 
-  std::string getSymbol();
-  Type getType();
+  std::string getSymbol() const;
+  Type getType() const;
+  void setSymbol(const std::string &symbol);
+  void setType(Type type);
   size_t length();
 };
 

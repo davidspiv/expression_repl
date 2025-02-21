@@ -17,7 +17,7 @@ double createCoeff(double denominator, const bool &isPositive) {
   return coeff;
 }
 
-double taylorSeries(Token token, double radians) {
+double taylorSeries(const Token &token, double radians) {
   const double normRadians = normalize(radians);
   const size_t terms = 50;
   double factorialCache[terms + 1];

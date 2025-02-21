@@ -5,6 +5,6 @@
 
 #include "token.h"
 
-double taylorSeries(Token token, double radians);
+double taylorSeries(const Token &token, double radians);
 
 #endif
