@@ -1,8 +1,8 @@
 #https://github.com/gwu-cs-os/evening_os_hour/blob/master/f19/10.2-makefiles/03_featureful_makefile/Makefile
 
 # Output binary name
-EXE_NAME=$(OBJ_DIR)/main.out
-TEST_EXE_NAME=$(OBJ_DIR)/test.out
+MAIN_BIN=$(OBJ_DIR)/main.out
+TEST_BIN=$(OBJ_DIR)/test.out
 
 # Directories
 SRC_DIR=src
@@ -41,16 +41,16 @@ ifneq ($(TEST_CPP_FILES),)
 endif
 
 # Default build target
-all: $(EXE_NAME)
+all: $(MAIN_BIN)
 
 # Build the primary binary
-$(EXE_NAME): $(O_FILES)
+$(MAIN_BIN): $(O_FILES)
 	$(CXX) $(LD_FLAGS) -o $@ $^
 
 # Build the test binary (linking test and src object files, excluding main.cpp)
-test: $(TEST_EXE_NAME)
+test: $(TEST_BIN)
 
-$(TEST_EXE_NAME): $(TEST_O_FILES) $(SRC_O_FILES)  # Link with source object files (excluding main)
+$(TEST_BIN): $(TEST_O_FILES) $(SRC_O_FILES)  # Link with source object files (excluding main)
 	$(CXX) $(LD_FLAGS) -o $@ $^
 
 # Compile source object files
@@ -74,7 +74,7 @@ endif
 
 # Run make test and execute the test binary
 dev: test
-	@./$(TEST_EXE_NAME)
+	@./$(TEST_BIN)
 
 # Clean generated files
 clean:

@@ -8,10 +8,10 @@ int _floor(double input) { return static_cast<int>(input); }
 
 double _abs(double value) { return value >= 0 ? value : -value; }
 
-double normalize(double x) { return x - _floor(x / M_PI) * M_PI; }
+double normalize(double x) { return x - _floor(x / (2 * M_PI)) * M_PI * 2; }
 
 double newtonsMethodRad(int index, double radicand) {
-  double guess = radicand / index;  
+  double guess = radicand / index;
   double delta;
 
   do {
