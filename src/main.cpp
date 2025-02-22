@@ -81,23 +81,20 @@ string handleInput(string& input) {
     }
 
     if (!input.empty()) {
-		try
-		{
-			TokensResult algResult = lexer(input);
-			Token::Type lastTokenType = algResult.tokens.back().getType();
+      try {
+        TokensResult algResult = lexer(input);
+        Token::Type lastTokenType = algResult.tokens.back().getType();
 
-			if (algResult.errMessage.empty() && lastTokenType != Token::BinaryOp &&
-				lastTokenType != Token::UnaryOp) {
-			  TokensResult rpnResult = shuntingYard(algResult.tokens);
+        if (algResult.errMessage.empty() && lastTokenType != Token::BinaryOp &&
+            lastTokenType != Token::UnaryOp) {
+          TokensResult rpnResult = shuntingYard(algResult.tokens);
 
-			  if (rpnResult.errMessage.empty()) {
-				result = evalRpnNotation(rpnResult.tokens);
-			  }
-			}
-		}
-		catch(const std::exception& e)
-		{
-		}
+          if (rpnResult.errMessage.empty()) {
+            result = evalRpnNotation(rpnResult.tokens);
+          }
+        }
+      } catch (const std::exception& e) {
+      }
     }
 
     displayInput(input, result, cursorIndex);

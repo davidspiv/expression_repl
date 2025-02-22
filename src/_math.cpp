@@ -1,10 +1,19 @@
 #include "../include/_math.h"
 
 #include <iostream>
+#include <limits>
+#include <stdexcept>
 
-#define M_PI 3.14159265358979323846
+static double maxInt = std::numeric_limits<int>::max();
+static double minInt = std::numeric_limits<int>::min();
 
-int _floor(double input) { return static_cast<int>(input); }
+// Input limited by size of int
+int _floor(double input) {
+  if (input > maxInt || input < minInt) {
+    throw std::domain_error("input outside of int size");
+  }
+  return static_cast<int>(input);
+}
 
 double _abs(double value) { return value >= 0 ? value : -value; }
 

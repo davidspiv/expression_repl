@@ -1,5 +1,5 @@
-#ifndef HISTORYCACHE_H
-#define HISTORYCACHE_H
+#ifndef HISTORY_CACHE_H
+#define HISTORY_CACHE_H
 
 #include <iostream>
 #include <list>

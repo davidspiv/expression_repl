@@ -1,5 +1,5 @@
-#ifndef SHUNTINGYARD_H
-#define SHUNTINGYARD_H
+#ifndef SHUNTING_YARD_H
+#define SHUNTING_YARD_H
 
 #include <deque>
 

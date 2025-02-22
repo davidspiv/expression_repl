@@ -1,10 +1,11 @@
-# Output binary name
-MAIN_BIN=$(OBJ_DIR)/main.out
-TEST_BIN=$(OBJ_DIR)/test.out
+# Output binary names
+RELEASE_BIN=$(OBJ_DIR)/release.out
+DEBUG_BIN=$(OBJ_DIR)/debug.out
+TESTER_BIN=$(OBJ_DIR)/test.out
 
 # Directories
 SRC_DIR=src
-TEST_DIR=test
+TESTER_DIR=test
 HEADER_DIR=include
 OBJ_DIR=build
 
@@ -18,30 +19,54 @@ LD_FLAGS=
 
 # Primary binary sources and objects
 CPP_FILES=$(wildcard $(SRC_DIR)/*.cpp)
-O_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/release_%.o,$(CPP_FILES))
-DEP_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.d,$(CPP_FILES))
+DEBUG_O_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/debug_%.o,$(CPP_FILES))
+RELEASE_O_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/release_%.o,$(CPP_FILES))
+DEBUG_DEP_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/debug_%.d,$(CPP_FILES))
+RELEASE_DEP_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/release_%.d,$(CPP_FILES))
 
-# Test binary sources and objects
-TEST_CPP_FILES=$(wildcard $(TEST_DIR)/*.cpp)
-TEST_O_FILES=$(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/release_%.o,$(TEST_CPP_FILES))
+# Remove main from src to avoid conflicts in test build
 SRC_WITHOUT_MAIN=$(filter-out $(SRC_DIR)/main.cpp, $(CPP_FILES))
-TEST_SRC_O_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/debug_%.o,$(SRC_WITHOUT_MAIN))
-TEST_DEP_FILES=$(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/debug_%.d,$(TEST_CPP_FILES))
 
-# Ensure we don't run with empty source lists
+# Test binary sources and objects, compiling testers intentionally in release mode for speed
+TESTER_CPP_FILES=$(wildcard $(TESTER_DIR)/*.cpp)
+TESTER_O_FILES=$(patsubst $(TESTER_DIR)/%.cpp,$(OBJ_DIR)/release_%.o,$(TESTER_CPP_FILES))
+TESTER_SRC_O_FILES=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/debug_%.o,$(SRC_WITHOUT_MAIN))
+TESTER_DEP_FILES=$(patsubst $(TESTER_DIR)/%.cpp,$(OBJ_DIR)/release_%.d,$(TESTER_CPP_FILES))
+
+# Check for empty source lists
 ifneq ($(CPP_FILES),)
     HAVE_SOURCE=1
 endif
 
-ifneq ($(TEST_CPP_FILES),)
-    HAVE_TEST_SOURCE=1
+ifneq ($(TESTER_CPP_FILES),)
+    HAVE_TESTER_SOURCE=1
 endif
 
-# Default build target
-all: $(MAIN_BIN)
+# Debug Build
+all: $(DEBUG_BIN)
 
-# Build the primary binary
-$(MAIN_BIN): $(O_FILES)
+# Build the debug binary
+$(DEBUG_BIN): $(DEBUG_O_FILES)
+	$(CXX) $(LD_FLAGS) -o $@ $^
+
+# Compile source object files (Debug Mode)
+$(OBJ_DIR)/debug_%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(C_FLAGS_DEV) -o $@ $<
+
+# Include dependencies
+ifneq ($(HAVE_SOURCE),)
+    -include $(DEP_FILES)
+endif
+
+run: all
+	@./$(DEBUG_BIN)
+
+# Release Build
+release: $(RELEASE_BIN)
+
+# Build the release binary
+$(RELEASE_BIN): $(RELEASE_O_FILES)
 	$(CXX) $(LD_FLAGS) -o $@ $^
 
 # Compile source object files (Release Mode)
@@ -54,13 +79,13 @@ ifneq ($(HAVE_SOURCE),)
     -include $(DEP_FILES)
 endif
 
-run: all
-	@./$(MAIN_BIN)
+run_release: release
+	@./$(RELEASE_BIN)
 
-# Build the test binary (compiles both src and test files with debug flags)
-test: $(TEST_BIN)
+# Test Build
+test: $(TESTER_BIN)
 
-$(TEST_BIN): $(TEST_O_FILES) $(TEST_SRC_O_FILES)
+$(TESTER_BIN): $(TESTER_O_FILES) $(TESTER_SRC_O_FILES)
 	$(CXX) $(LD_FLAGS) -o $@ $^
 
 # Compile all source files needed for test with debug flags
@@ -68,23 +93,23 @@ $(OBJ_DIR)/debug_%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(C_FLAGS_DEV) -o $@ $<
 
-# Compile test files with debug flags
-$(OBJ_DIR)/release_%.o: $(TEST_DIR)/%.cpp
+# Compile tester files with release flags
+$(OBJ_DIR)/release_%.o: $(TESTER_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(C_FLAGS_RELEASE) -o $@ $<
+	$(CXX) $(C_FLAGS_DEV) -o $@ $<
 
 # Include test dependencies
-ifneq ($(HAVE_TEST_SOURCE),)
-    -include $(TEST_DEP_FILES)
+ifneq ($(HAVE_TESTER_SOURCE),)
+    -include $(TESTER_DEP_FILES)
 endif
 
 # Run test binary after building
 dev: test
-	@./$(TEST_BIN)
+	@./$(TESTER_BIN)
 
 # Clean generated files
 clean:
-	$(RM) -rf $(TEST_BIN) $(OBJ_DIR)
+	$(RM) -rf $(TESTER_BIN) $(OBJ_DIR)
 
 # Ensure these targets aren't mistaken for files
-.PHONY: test dev clean
+.PHONY: test dev clean run all release run_release

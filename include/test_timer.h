@@ -1,3 +1,6 @@
+#ifndef TEST_TIMER_H
+#define TEST_TIMER_H
+
 #include <chrono>
 
 class Timer {
@@ -12,3 +15,5 @@ class Timer {
   std::chrono::time_point<std::chrono::high_resolution_clock> timePointStart;
   std::chrono::time_point<std::chrono::high_resolution_clock> timePointEnd;
 };
+
+#endif

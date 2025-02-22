@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <sstream>
 
 #include "../include/taylorSeries.h"
 #include "../include/test_helpers.h"
@@ -11,14 +12,12 @@
 
 using namespace std;
 
-double lower = std::numeric_limits<double>::min();
-double upper = std::numeric_limits<double>::max();
-double testVal = 328293847234;
-size_t failed = 0;
-ostringstream out;
-
 void testTaylorSeries() {
-  out << "Taylor Series Test:\n";
+  double testVal = 234234;
+  size_t failed = 0;
+  ostringstream out;
+
+  out << "\ntaylorSeries test:\n";
 
   Token token;
   token.setType(Token::UnaryOp);
@@ -27,9 +26,9 @@ void testTaylorSeries() {
   double test = taylorSeries(token, testVal);
   double answer = sin(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: sin(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: sin(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
@@ -37,9 +36,9 @@ void testTaylorSeries() {
   test = taylorSeries(token, testVal);
   answer = cos(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: cos(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: cos(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
@@ -47,9 +46,9 @@ void testTaylorSeries() {
   test = taylorSeries(token, testVal);
   answer = tan(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: tan(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: tan(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
@@ -57,9 +56,9 @@ void testTaylorSeries() {
   test = taylorSeries(token, testVal);
   answer = 1 / sin(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: csc(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: csc(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
@@ -67,9 +66,9 @@ void testTaylorSeries() {
   test = taylorSeries(token, testVal);
   answer = 1 / cos(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: sec(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: sec(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
@@ -77,9 +76,9 @@ void testTaylorSeries() {
   test = taylorSeries(token, testVal);
   answer = 1 / tan(testVal);
 
-  if (!Equiv(test, answer)) {
-    out << "INPUT: cot(" << testVal << ") ,TEST: " << test
-        << ", ANSWER: " << answer << "\n";
+  if (!equiv(test, answer)) {
+    out << "INPUT: cot(" << testVal << "), RSLT: " << test
+        << ", ANSW: " << answer << "\n";
     failed++;
   }
 
