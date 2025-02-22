@@ -1,19 +1,14 @@
-#include <time.h>
 
 #include <cassert>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <random>
 
 #include "../include/taylorSeries.h"
 #include "../include/token.h"
 
 using namespace std;
-
-// static double maxDouble = std::numeric_limits<double>::max();
-// static double minDouble = std::numeric_limits<double>::min();
 
 bool Equiv(double a, double b, double accuracy = 1e-6) {
   return abs(a - b) < accuracy;
@@ -21,72 +16,81 @@ bool Equiv(double a, double b, double accuracy = 1e-6) {
 
 double lower = std::numeric_limits<double>::min();
 double upper = std::numeric_limits<double>::max();
-
-double getRandomDouble(double min = lower, double max = upper) {
-  static std::mt19937 generator(
-      static_cast<unsigned>(time(nullptr)));  // Seed with current time
-  std::uniform_real_distribution<double> distribution(min, max);
-  return distribution(generator);
-}
+double testVal = 328293847234;
+size_t failed = 0;
+ostringstream out;
 
 void testTaylorSeries() {
-  cout << "Taylor Series Test" << endl;
+  out << "Taylor Series Test:\n";
 
   Token token;
   token.setType(Token::UnaryOp);
   token.setSymbol("sin");
 
-  double rand = getRandomDouble();
-  double test = taylorSeries(token, rand);
-  double answer = sin(rand);
+  double test = taylorSeries(token, testVal);
+  double answer = sin(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: sin(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: sin(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
 
   token.setSymbol("cos");
-  test = taylorSeries(token, rand);
-  answer = cos(rand);
+  test = taylorSeries(token, testVal);
+  answer = cos(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: cos(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: cos(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
 
   token.setSymbol("tan");
-  test = taylorSeries(token, rand);
-  answer = tan(rand);
+  test = taylorSeries(token, testVal);
+  answer = tan(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: tan(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: tan(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
 
   token.setSymbol("csc");
-  test = taylorSeries(token, rand);
-  answer = 1 / sin(rand);
+  test = taylorSeries(token, testVal);
+  answer = 1 / sin(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: csc(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: csc(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
 
   token.setSymbol("sec");
-  test = taylorSeries(token, rand);
-  answer = 1 / cos(rand);
+  test = taylorSeries(token, testVal);
+  answer = 1 / cos(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: sec(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: sec(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
 
   token.setSymbol("cot");
-  test = taylorSeries(token, rand);
-  answer = 1 / tan(rand);
+  test = taylorSeries(token, testVal);
+  answer = 1 / tan(testVal);
 
   if (!Equiv(test, answer)) {
-    cout << "INPUT: cot(" << rand << ") ,TEST: " << test
-         << ", ANSWER: " << answer << endl;
+    out << "INPUT: cot(" << testVal << ") ,TEST: " << test
+        << ", ANSWER: " << answer << "\n";
+    failed++;
   }
+
+  if (!failed) {
+    out << "All tests passed.\n";
+  } else {
+    out << failed << " test(s) failed.\n";
+  }
+
+  cout << out.str() << flush;
 }
