@@ -6,13 +6,10 @@
 #include <limits>
 
 #include "../include/taylorSeries.h"
+#include "../include/test_helpers.h"
 #include "../include/token.h"
 
 using namespace std;
-
-bool Equiv(double a, double b, double accuracy = 1e-6) {
-  return abs(a - b) < accuracy;
-};
 
 double lower = std::numeric_limits<double>::min();
 double upper = std::numeric_limits<double>::max();

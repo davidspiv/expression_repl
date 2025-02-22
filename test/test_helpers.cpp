@@ -9,3 +9,7 @@ double getRandomDouble(double min, double max) {
   std::uniform_real_distribution<double> distribution(min, max);
   return distribution(generator);
 }
+
+bool Equiv(double a, double b, double accuracy = 1e-6) {
+  return std::abs(a - b) < accuracy;
+};

@@ -3,6 +3,8 @@
 #include <chrono>
 #include <iostream>
 
+#include "../include/taylorSeries.h"
+
 Timer::~Timer() {
   timePointEnd = std::chrono::high_resolution_clock::now();
   auto start =
