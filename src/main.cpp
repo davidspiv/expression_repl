@@ -2,12 +2,12 @@
 #include <iostream>
 #include <string>
 
-#include "../include/evalRpnNotation.h"
+#include "../include/evalRpn.h"
 #include "../include/historyCache.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
+#include "../include/parser.h"
 #include "../include/result.h"
-#include "../include/shuntingYard.h"
 #include "../include/token.h"
 
 using namespace std;
@@ -87,10 +87,10 @@ string handleInput(string& input) {
 
         if (algResult.errMessage.empty() && lastTokenType != Token::BinaryOp &&
             lastTokenType != Token::UnaryOp) {
-          TokensResult rpnResult = shuntingYard(algResult.tokens);
+          TokensResult rpnResult = parser(algResult.tokens);
 
           if (rpnResult.errMessage.empty()) {
-            result = evalRpnNotation(rpnResult.tokens);
+            result = evalRpn(rpnResult.tokens);
           }
         }
       } catch (const std::exception& e) {

@@ -13,7 +13,7 @@ size_t safePeekTop(std::stack<Token> &opStack) {
   return 0;
 }
 
-TokensResult shuntingYard(std::deque<Token> inputQueue) {
+TokensResult parser(std::deque<Token> inputQueue) {
   std::stack<Token> opStack;
   std::deque<Token> outputQueue;
 
@@ -40,6 +40,7 @@ TokensResult shuntingYard(std::deque<Token> inputQueue) {
       continue;
     }
 
+    // Shunting yard
     const size_t currentOpRank = opRank.at(token.getSymbol());
     size_t previousOpRank = safePeekTop(opStack);
 
