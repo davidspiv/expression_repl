@@ -32,7 +32,7 @@ bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
 
 static bool isSecondLine = false;
 
-void displayInput(const InputLine &inputLine, const StringResult &result) {
+void displayInput(const InputLine &inputLine, const ResultAsString &result) {
   ostringstream out;
 
   if (!result.str.empty() && result.errMessage.empty()) {
@@ -54,7 +54,7 @@ void displayInput(const InputLine &inputLine, const StringResult &result) {
   cout << out.str() << flush;
 }
 
-void displayError(const StringResult &result, size_t cursorIndex) {
+void displayError(const ResultAsString &result, size_t cursorIndex) {
   ostringstream out;
 
   out << '\n' << CLEAR << GREY << result.errMessage << WHITE << PREV_LINE;

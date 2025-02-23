@@ -7,7 +7,7 @@
 #include "result.h"
 #include "token.h"
 
-TokensResult lexer(const std::string &input);
+ResultAsTokens lexer(const std::string &input);
 
 bool isNumeric(const char symbol);
 

@@ -5,12 +5,12 @@
 
 #include "token.h"
 
-struct TokensResult {
+struct ResultAsTokens {
   std::deque<Token> tokens;
   std::string errMessage;
 };
 
-struct StringResult {
+struct ResultAsString {
   std::string str;
   std::string errMessage;
 };

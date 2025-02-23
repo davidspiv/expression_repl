@@ -6,6 +6,6 @@
 #include "result.h"
 #include "token.h"
 
-StringResult evalRpn(const std::deque<Token> &rpn);
+ResultAsString evalRpn(const std::deque<Token> &rpn);
 
 #endif

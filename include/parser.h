@@ -6,6 +6,6 @@
 #include "result.h"
 #include "token.h"
 
-TokensResult parser(std::deque<Token> inputQueue);
+ResultAsTokens parser(std::deque<Token> inputQueue);
 
 #endif

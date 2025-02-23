@@ -21,12 +21,12 @@ bool isDisplayable(char ch) {
          ch == ')' || ch == ' ';
 }
 
-void handleResult(StringResult &result, const string &errMessage = "") {
+void handleResult(ResultAsString &result, const string &errMessage = "") {
   result.errMessage = errMessage;
   displayInput(inputLine, result);
 };
 
-StringResult updateExpression(char ch) {
+ResultAsString updateExpression(char ch) {
   if (ch == '\033') {  // handle ANSI escape sequence
 
     char escCode[2];
@@ -69,14 +69,14 @@ StringResult updateExpression(char ch) {
     inputLine.insert(ch);
   }
 
-  StringResult result;
+  ResultAsString result;
 
   if (inputLine.getText().empty()) {
     handleResult(result, "empty input");
     return result;
   }
 
-  TokensResult algResult = lexer(inputLine.getText());
+  ResultAsTokens algResult = lexer(inputLine.getText());
 
   if (!algResult.errMessage.empty()) {
     handleResult(result, algResult.errMessage);
@@ -90,7 +90,7 @@ StringResult updateExpression(char ch) {
     return result;
   }
 
-  TokensResult rpnResult = parser(algResult.tokens);
+  ResultAsTokens rpnResult = parser(algResult.tokens);
 
   if (!rpnResult.errMessage.empty()) {
     handleResult(result, rpnResult.errMessage);
@@ -104,9 +104,9 @@ StringResult updateExpression(char ch) {
   return result;
 }
 
-StringResult newExpression() {
+ResultAsString newExpression() {
   char ch;
-  StringResult result;
+  ResultAsString result;
 
   inputLine.reset();
 
@@ -143,7 +143,7 @@ int main() {
   setNonCanonicalMode(terminalSettings);
 
   do {
-    const StringResult result = newExpression();
+    const ResultAsString result = newExpression();
     displayResult(result.str);
 
   } while (inputLine.getText() != "exit");
