@@ -44,11 +44,11 @@ void displayInput(const string &input, const StringResult &result,
     out << '\n' << CLEAR << PREV_LINE;
   }
 
-  for (size_t i = 0; i < cursorIndex + 3; i++) {
-    out << CURSOR_RIGHT;
-  }
-
   out << '\r' << CLEAR << ">  " << input;
+
+  for (size_t i = 0; i < input.length() - cursorIndex; i++) {
+    out << CURSOR_LEFT;
+  }
 
   cout << out.str() << flush;
 }
