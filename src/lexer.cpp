@@ -68,10 +68,13 @@ TokensResult lexer(const std::string &input) {
     }
   }
 
-  if (valueBuff.length()) {
+  if (!valueBuff.empty()) {
     tokens.push_back(Token(valueBuff, Token::Value));
   }
 
-  // if the opSymbol buffer is full, send that as an error message
-  return {tokens, opSymbolBuff};
+  if (!opSymbolBuff.empty()) {
+    return {tokens, "Operator buff not empty"};
+  }
+  
+  return {tokens, ""};
 }

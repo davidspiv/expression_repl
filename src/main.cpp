@@ -80,24 +80,26 @@ string handleInput(string& input) {
       cursorIndex++;
     }
 
+    displayInput(input, cursorIndex);
+
     if (!input.empty()) {
-      try {
-        TokensResult algResult = lexer(input);
-        Token::Type lastTokenType = algResult.tokens.back().getType();
+      TokensResult algResult = lexer(input);
 
-        if (algResult.errMessage.empty() && lastTokenType != Token::BinaryOp &&
-            lastTokenType != Token::UnaryOp) {
-          TokensResult rpnResult = parser(algResult.tokens);
+      if (!algResult.errMessage.empty()) continue;
 
-          if (rpnResult.errMessage.empty()) {
-            result = evalRpn(rpnResult.tokens);
-          }
-        }
-      } catch (const std::exception& e) {
-      }
-    }
+      Token::Type lastTokenType = algResult.tokens.back().getType();
 
-    displayInput(input, result, cursorIndex);
+      if (lastTokenType == Token::UnaryOp) continue;
+      if (lastTokenType == Token::BinaryOp) continue;
+
+      TokensResult rpnResult = parser(algResult.tokens);
+
+      if (!rpnResult.errMessage.empty()) continue;
+
+      result = evalRpn(rpnResult.tokens);
+    };
+
+    displayTempResult(result, cursorIndex);
   }
 
   if (historyCache.isEnd() || historyCache.getCurrent() != input) {

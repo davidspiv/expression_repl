@@ -18,8 +18,8 @@
 void setNonCanonicalMode(struct termios &initialSettings);
 void restoreCanonicalMode(const struct termios &initialSettings);
 bool readNextChar(char &ch);
-void displayInput(const std::string &input, const StringResult &result,
-                  size_t cursorIndex);
+void displayInput(const std::string &input, size_t cursorIndex);
+void displayTempResult(const StringResult &result, size_t cursorIndex);
 void displayResult(const std::string &result);
 
 #endif
