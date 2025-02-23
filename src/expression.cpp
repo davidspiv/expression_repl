@@ -11,8 +11,6 @@
 
 using namespace std;
 
-static HistoryCache historyCache;
-
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
          ch == ')' || ch == ' ';
@@ -24,7 +22,8 @@ void handleResult(const InputLine &inputLine, ResultAsString &result,
   displayInput(inputLine, result);
 };
 
-ResultAsString updateExpression(char ch, InputLine &inputLine) {
+ResultAsString updateExpression(char ch, InputLine &inputLine,
+                                HistoryCache &historyCache) {
   if (ch == '\033') {  // handle ANSI escape sequence
 
     char escCode[2];
@@ -105,6 +104,7 @@ ResultAsString updateExpression(char ch, InputLine &inputLine) {
 ResultAsString newExpression(InputLine &inputLine) {
   char ch;
   ResultAsString result;
+  HistoryCache historyCache;
 
   inputLine.reset();
 
@@ -116,7 +116,7 @@ ResultAsString newExpression(InputLine &inputLine) {
   }
 
   while (readNextChar(ch) && ch != '\n') {
-    result = updateExpression(ch, inputLine);
+    result = updateExpression(ch, inputLine, historyCache);
   }
 
   if (historyCache.isEnd() ||
