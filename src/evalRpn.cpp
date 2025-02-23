@@ -7,10 +7,10 @@
 #include "../include/taylorSeries.h"
 #include "../include/token.h"
 
-StringResult evalRpn(std::deque<Token> &rpn) {
+StringResult evalRpn(const std::deque<Token> &rpn) {
   std::stack<double> result;
 
-  for (Token &token : rpn) {
+  for (auto &token : rpn) {
     // handle numerics
     if (token.getType() == Token::Value) {
       result.push(stod(token.getSymbol()));

@@ -7,5 +7,5 @@
 int main() {
   testTaylorSeries();
   testNormalize();
-    testFloor();
+  testFloor();
 }

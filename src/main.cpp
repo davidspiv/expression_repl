@@ -13,17 +13,20 @@
 using namespace std;
 
 static HistoryCache historyCache;
+static size_t cursorIndex = 0;
 
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
          ch == ')' || ch == ' ';
 }
 
-string handleInput(string& input) {
-  size_t cursorIndex = 0;
+StringResult handleInput(string& input) {
   StringResult result;
   char ch;
-  input = "";
+
+  if (!cursorIndex) {
+    input = "";
+  }
 
   // TEST
   if (historyCache.empty()) {
@@ -85,16 +88,24 @@ string handleInput(string& input) {
     if (!input.empty()) {
       TokensResult algResult = lexer(input);
 
-      if (!algResult.errMessage.empty()) continue;
+      if (!algResult.errMessage.empty()) {
+        result.errMessage = algResult.errMessage;
+        continue;
+      }
 
       Token::Type lastTokenType = algResult.tokens.back().getType();
 
-      if (lastTokenType == Token::UnaryOp) continue;
-      if (lastTokenType == Token::BinaryOp) continue;
+      if (lastTokenType == Token::UnaryOp || lastTokenType == Token::BinaryOp) {
+        result.errMessage = "hanging operator";
+        continue;
+      }
 
       TokensResult rpnResult = parser(algResult.tokens);
 
-      if (!rpnResult.errMessage.empty()) continue;
+      if (!rpnResult.errMessage.empty()) {
+        result.errMessage = rpnResult.errMessage;
+        continue;
+      }
 
       result = evalRpn(rpnResult.tokens);
 
@@ -109,7 +120,12 @@ string handleInput(string& input) {
   }
   historyCache.end();
 
-  return result.str;
+  if (!result.errMessage.empty()) {
+    displayError(result, cursorIndex);
+    return handleInput(input);
+  }
+
+  return result;
 };
 
 int main() {
@@ -121,8 +137,8 @@ int main() {
   setNonCanonicalMode(terminalSettings);
 
   while (input != "exit") {
-    const string result = handleInput(input);
-    displayResult(result);
+    const StringResult result = handleInput(input);
+    displayResult(result.str);
   }
 
   restoreCanonicalMode(terminalSettings);
