@@ -7,38 +7,35 @@
 #include "result.h"
 
 class Expression {
- private:
-  size_t cursorIndex;
-  std::string text;
+ public:
+  Expression() { this->reset(); };
+  ~Expression() {};
 
+  size_t getCursorIndex() const;
+  std::string getInput() const;
+  void createExpression();  // controller
+  void displayFinalResult();
+  bool isError();
+
+ private:
+  static HistoryCache historyCache;
+  enum InputState { INPUT, HISTORY };
+  InputState inputState;
+
+  size_t cursorIndex;
+  std::string input;
+  std::string savedInput;
   std::string result;
   std::string errMessage;
   bool isSecondLine;
 
- public:
-  Expression()
-      : cursorIndex(0),
-        text(""),
-        result(""),
-        errMessage(""),
-        isSecondLine(false) {};
-  ~Expression() {};
-
-  static HistoryCache historyCache;
-
-  size_t getCursorIndex() const;
-  std::string getText() const;
-  void setText(const std::string &text);
+ private:
+  void setInput(const std::string &text);
   void backspace();
-  void insert(char ch);
+  void update(char ch);
   void reset();
-
-  void createExpression();
-  void displayFinalResult();
-  bool isError();
   void displayInput(const std::string &err);
   void handleChar(const char ch);
-  void updateExpression(char ch);
 };
 
 #endif

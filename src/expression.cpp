@@ -13,54 +13,33 @@ HistoryCache Expression::historyCache;
 
 size_t Expression::getCursorIndex() const { return cursorIndex; }
 
-std::string Expression::getText() const { return text; }
+std::string Expression::getInput() const { return input; }
 
-void Expression::setText(const std::string &text) {
-  this->text = text;
-  cursorIndex = text.length();
+void Expression::setInput(const std::string &text) {
+  input = text;
+  cursorIndex = input.length();
 }
 
 void Expression::backspace() {
-  if (cursorIndex > text.length()) return;
+  if (cursorIndex > input.length()) return;
   --cursorIndex;
-  text.erase(text.begin() + cursorIndex);
+  input.erase(input.begin() + cursorIndex);
 };
 
-void Expression::insert(char ch) {
-  text.insert(cursorIndex, std::string(1, ch));
+void Expression::update(char ch) {
+  input.insert(cursorIndex, std::string(1, ch));
   ++cursorIndex;
 };
 
 void Expression::reset() {
+  inputState = INPUT;
   cursorIndex = 0;
-  text = "";
+  input = "";
+  savedInput = "";
   result = "";
   errMessage = "";
   isSecondLine = false;
 }
-
-bool Expression::isError() { return !errMessage.empty(); };
-
-void Expression::createExpression() {
-  char ch;
-
-  // TEST HISTORY
-  if (this->historyCache.empty()) {
-    historyCache.addEntry("1*1");
-    historyCache.addEntry("2*2");
-    historyCache.addEntry("3*3");
-  }
-
-  while (readNextChar(ch) && ch != '\n') {
-    updateExpression(ch);
-  }
-
-  if (historyCache.isEnd() || historyCache.getCurrent() != text) {
-    historyCache.addEntry(text);
-  }
-
-  historyCache.end();
-};
 
 void Expression::handleChar(const char ch) {
 #ifdef _WIN32
@@ -72,12 +51,12 @@ void Expression::handleChar(const char ch) {
       case 72:  // up arrow
         std::cout << "hello!";
         Expression::historyCache.moveBackward();
-        text = Expression::historyCache.getCurrent();
+        input = Expression::historyCache.getCurrent();
         break;
 
       case 80:  // down arrow
         Expression::historyCache.moveForward();
-        text = Expression::historyCache.getCurrent();
+        input = Expression::historyCache.getCurrent();
         break;
     }
 
@@ -93,13 +72,32 @@ void Expression::handleChar(const char ch) {
         escCode[0] == '[') {
       switch (escCode[1]) {
         case 'A':  // up arrow
-          Expression::historyCache.moveBackward();
-          text = Expression::historyCache.getCurrent();
+          if (inputState == INPUT) {
+            inputState = HISTORY;
+            savedInput = input;
+
+            if (!historyCache.isEnd()) {
+              historyCache.moveBackward();
+            }
+          } else {
+            historyCache.moveBackward();
+          }
+
+          this->setInput(historyCache.getCurrent());
           break;
 
         case 'B':  // down arrow
-          Expression::historyCache.moveForward();
-          text = Expression::historyCache.getCurrent();
+
+          if (inputState == INPUT) return;
+
+          if (historyCache.isEnd()) {
+            inputState = INPUT;
+            this->setInput(savedInput);
+          } else {
+            historyCache.moveForward();
+            this->setInput(historyCache.getCurrent());
+          }
+
           break;
 
         case 'D':
@@ -110,7 +108,7 @@ void Expression::handleChar(const char ch) {
           break;
 
         case 'C':
-          if (cursorIndex < text.length()) {
+          if (cursorIndex < input.length()) {
             std::cout << CURSOR_RIGHT << std::flush;
             ++cursorIndex;
           }
@@ -120,23 +118,19 @@ void Expression::handleChar(const char ch) {
 
   } else if (ch == 0x7F && cursorIndex) {  // handle backspace
     std::cout << "\b \b";
-    backspace();
+    this->backspace();
 
   } else if (isDisplayable(ch)) {  // handle character to display
-    insert(ch);
+    this->update(ch);
   }
 #endif
-}
 
-void Expression::updateExpression(char ch) {
-  handleChar(ch);
-
-  if (text.empty()) {
+  if (input.empty()) {
     displayInput("empty input");
     return;
   }
 
-  ResultAsTokens algResult = lexer(text);
+  ResultAsTokens algResult = lexer(input);
 
   if (!algResult.errMessage.empty()) {
     displayInput(algResult.errMessage);
@@ -177,9 +171,9 @@ void Expression::displayInput(const std::string &err) {
     out << '\n' << CLEAR << PREV_LINE;
   }
 
-  out << '\r' << CLEAR << ">  " << text;
+  out << '\r' << CLEAR << ">  " << input;
 
-  for (size_t i = 0; i < text.length() - cursorIndex; i++) {
+  for (size_t i = 0; i < input.length() - cursorIndex; i++) {
     out << CURSOR_LEFT;
   }
 
@@ -203,3 +197,26 @@ void Expression::displayFinalResult() {
 
   std::cout << out.str() << std::flush;
 }
+
+bool Expression::isError() { return !errMessage.empty(); };
+
+void Expression::createExpression() {
+  char ch;
+
+  // TEST HISTORY
+  if (this->historyCache.empty()) {
+    historyCache.addEntry("1*1");
+    historyCache.addEntry("2*2");
+    historyCache.addEntry("3*3");
+  }
+
+  while (readNextChar(ch) && ch != '\n') {
+    handleChar(ch);
+  }
+
+  if (historyCache.isEnd() || historyCache.getCurrent() != input) {
+    historyCache.addEntry(input);
+  }
+
+  historyCache.end();
+};

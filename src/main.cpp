@@ -20,7 +20,7 @@ int main() {
   setNonCanonicalMode(terminalSettings);
 #endif
 
-  while (inputLine.getText() != "exit") {
+  while (inputLine.getInput() != "exit") {
     inputLine.createExpression();
     inputLine.displayFinalResult();
   }

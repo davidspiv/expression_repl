@@ -22,7 +22,7 @@ void HistoryCache::moveBackward() {
 
 void HistoryCache::end() { iter = history.end(); }
 
-bool HistoryCache::isEnd() { return iter == history.end(); }
+bool HistoryCache::isEnd() { return iter == std::prev(history.end()); }
 
 bool HistoryCache::isBeginning() { return iter == history.begin(); }
 
