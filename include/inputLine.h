@@ -4,6 +4,7 @@
 #include <string>
 
 #include "historyCache.h"
+#include "result.h"
 
 class InputLine {
  private:
@@ -36,6 +37,12 @@ class InputLine {
   void newExpression();
   void displayResult();
   bool isError();
+
+  void displayInput();
+  void handleResult(const std::string &err);
+  bool isDisplayable(char ch);
+  void handleChar(const char ch);
+  void updateExpression(char ch);
 };
 
 #endif

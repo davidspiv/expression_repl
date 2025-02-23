@@ -3,7 +3,6 @@
 #include <termios.h>
 #endif
 
-#include "../include/expression.h"
 #include "../include/historyCache.h"
 #include "../include/io.h"
 

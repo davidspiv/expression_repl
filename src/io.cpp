@@ -1,5 +1,3 @@
-#include "../include/io.h"
-
 #ifdef _WIN32
 #else
 #include <termios.h>
@@ -11,9 +9,8 @@
 #include <sstream>
 
 #include "../include/inputLine.h"
+#include "../include/io.h"
 #include "../include/result.h"
-
-static bool isSecondLine = false;
 
 #ifdef __linux__
 void setNonCanonicalMode(struct termios &initialSettings) {
@@ -36,25 +33,3 @@ void restoreCanonicalMode(const struct termios &initialSettings) {
 #endif
 
 bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
-
-void displayInput(const InputLine &inputLine, const ResultAsString &result) {
-  std::ostringstream out;
-
-  if (!result.str.empty() && result.errMessage.empty()) {
-    out << '\n' << CLEAR << GREY << stod(result.str) << WHITE << PREV_LINE;
-
-    isSecondLine = true;
-
-  } else if (isSecondLine) {
-    out << '\n' << CLEAR << PREV_LINE;
-  }
-
-  out << '\r' << CLEAR << ">  " << inputLine.getText();
-
-  for (size_t i = 0;
-       i < inputLine.getText().length() - inputLine.getCursorIndex(); i++) {
-    out << CURSOR_LEFT;
-  }
-
-  std::cout << out.str() << std::flush;
-}
