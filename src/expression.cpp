@@ -154,7 +154,7 @@ ResultAsString newExpression(InputLine &inputLine) {
   }
 
   if (!result.errMessage.empty()) {
-    displayError(result, inputLine.getCursorIndex());
+    displayError(inputLine, result);
     return newExpression(inputLine);
   }
 

@@ -59,12 +59,12 @@ void displayInput(const InputLine &inputLine, const ResultAsString &result) {
   std::cout << out.str() << std::flush;
 }
 
-void displayError(const ResultAsString &result, size_t cursorIndex) {
+void displayError(const InputLine &inputLine, const ResultAsString &result) {
   std::ostringstream out;
 
   out << '\n' << CLEAR << GREY << result.errMessage << WHITE << PREV_LINE;
 
-  for (size_t i = 0; i < cursorIndex + 3; i++) {
+  for (size_t i = 0; i < inputLine.getCursorIndex() + 3; i++) {
     out << CURSOR_RIGHT;
   }
 

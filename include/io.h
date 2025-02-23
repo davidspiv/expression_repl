@@ -24,7 +24,7 @@ void setNonCanonicalMode(struct termios &initialSettings);
 void restoreCanonicalMode(const struct termios &initialSettings);
 bool readNextChar(char &ch);
 void displayInput(const InputLine &inputLine, const ResultAsString &result);
-void displayError(const ResultAsString &result, size_t cursorIndex);
+void displayError(const InputLine &inputLine, const ResultAsString &result);
 void displayResult(const std::string &result);
 
 #endif
