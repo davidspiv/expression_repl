@@ -7,7 +7,7 @@
 #include "../include/taylorSeries.h"
 #include "../include/token.h"
 
-StringResult evalRpn(const std::deque<Token> &rpn) {
+ResultAsString evalRpn(const std::deque<Token> &rpn) {
   std::stack<double> result;
 
   for (auto &token : rpn) {

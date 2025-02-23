@@ -13,7 +13,7 @@ size_t safePeekTop(std::stack<Token> &opStack) {
   return 0;
 }
 
-TokensResult parser(std::deque<Token> inputQueue) {
+ResultAsTokens parser(std::deque<Token> inputQueue) {
   std::stack<Token> opStack;
   std::deque<Token> outputQueue;
 

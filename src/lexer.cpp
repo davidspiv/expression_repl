@@ -15,7 +15,7 @@ bool isNegateOp(std::deque<Token> &tokens) {
                             tokens.back().getSymbol() != ")");
 }
 
-TokensResult lexer(const std::string &input) {
+ResultAsTokens lexer(const std::string &input) {
   std::deque<Token> tokens;
   std::string valueBuff = "";
   std::string opSymbolBuff = "";
@@ -75,6 +75,6 @@ TokensResult lexer(const std::string &input) {
   if (!opSymbolBuff.empty()) {
     return {tokens, "Operator buff not empty"};
   }
-  
+
   return {tokens, ""};
 }
