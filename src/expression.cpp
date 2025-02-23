@@ -1,4 +1,9 @@
-#include <deque>
+#ifdef _WIN32
+#include <conio.h>
+#else
+#include <termios.h>
+#endif
+
 #include <iostream>
 #include <string>
 
@@ -9,21 +14,42 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
-using namespace std;
+static HistoryCache historyCache;
 
 bool isDisplayable(char ch) {
-  return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
+  return isNumeric(ch) || isalpha(ch) || opRank.count(std::string(1, ch)) ||
          ch == ')' || ch == ' ';
 }
 
 void handleResult(const InputLine &inputLine, ResultAsString &result,
-                  const string &errMessage = "") {
+                  const std::string &errMessage = "") {
   result.errMessage = errMessage;
   displayInput(inputLine, result);
 };
 
-ResultAsString updateExpression(char ch, InputLine &inputLine,
-                                HistoryCache &historyCache) {
+void handleChar(const char ch, InputLine &inputLine) {
+#ifdef _WIN32
+  if (ch == 224) {  // handle ANSI escape sequence
+
+    char escCode = _getch();
+
+    switch (escCode) {
+      case 72:  // up arrow
+        std::cout << "hello!";
+        historyCache.moveBackward();
+        inputLine.setText(historyCache.getCurrent());
+        break;
+
+      case 80:  // down arrow
+        historyCache.moveForward();
+        inputLine.setText(historyCache.getCurrent());
+        break;
+    }
+
+  } else if (isDisplayable(ch)) {  // handle character to display
+    inputLine.insert(ch);
+  }
+#else
   if (ch == '\033') {  // handle ANSI escape sequence
 
     char escCode[2];
@@ -37,21 +63,20 @@ ResultAsString updateExpression(char ch, InputLine &inputLine,
           break;
 
         case 'B':  // down arrow
-        {
           historyCache.moveForward();
           inputLine.setText(historyCache.getCurrent());
-        } break;
+          break;
 
         case 'D':
           if (inputLine.getCursorIndex()) {
-            cout << CURSOR_LEFT << flush;
+            std::cout << CURSOR_LEFT << std::flush;
             --inputLine;
           }
           break;
 
         case 'C':
           if (inputLine.getCursorIndex() < inputLine.getText().length()) {
-            cout << CURSOR_RIGHT << flush;
+            std::cout << CURSOR_RIGHT << std::flush;
             ++inputLine;
           }
           break;
@@ -59,14 +84,19 @@ ResultAsString updateExpression(char ch, InputLine &inputLine,
     }
 
   } else if (ch == 0x7F && inputLine.getCursorIndex()) {  // handle backspace
-    cout << "\b \b";
+    std::cout << "\b \b";
     inputLine.erase();
 
   } else if (isDisplayable(ch)) {  // handle character to display
     inputLine.insert(ch);
   }
+#endif
+}
 
+ResultAsString updateExpression(char ch, InputLine &inputLine) {
   ResultAsString result;
+
+  handleChar(ch, inputLine);
 
   if (inputLine.getText().empty()) {
     handleResult(inputLine, result, "empty input");
@@ -104,7 +134,6 @@ ResultAsString updateExpression(char ch, InputLine &inputLine,
 ResultAsString newExpression(InputLine &inputLine) {
   char ch;
   ResultAsString result;
-  HistoryCache historyCache;
 
   inputLine.reset();
 
@@ -116,7 +145,7 @@ ResultAsString newExpression(InputLine &inputLine) {
   }
 
   while (readNextChar(ch) && ch != '\n') {
-    result = updateExpression(ch, inputLine, historyCache);
+    result = updateExpression(ch, inputLine);
   }
 
   if (historyCache.isEnd() ||

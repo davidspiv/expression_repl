@@ -1,25 +1,25 @@
-#include <deque>
-#include <iostream>
-#include <string>
+#ifdef _WIN32
+#else
+#include <termios.h>
+#endif
 
-#include "../include/evalRpn.h"
 #include "../include/expression.h"
 #include "../include/historyCache.h"
 #include "../include/io.h"
-#include "../include/lexer.h"
-#include "../include/parser.h"
-#include "../include/result.h"
-#include "../include/token.h"
-
-using namespace std;
 
 int main() {
+#ifndef _WIN32
   struct termios terminalSettings;
+#endif
+
   InputLine inputLine;
 
-  cout << "Enter Expression. Type 'exit' to quit." << '\n' << ">  " << flush;
+  std::cout << "Enter Expression. Type 'exit' to quit." << "\n>  "
+            << std::flush;
 
+#ifndef _WIN32
   setNonCanonicalMode(terminalSettings);
+#endif
 
   do {
     const ResultAsString result = newExpression(inputLine);
@@ -27,7 +27,9 @@ int main() {
 
   } while (inputLine.getText() != "exit");
 
+#ifndef _WIN32
   restoreCanonicalMode(terminalSettings);
+#endif
 
-  cout << endl << "Successfully exited" << endl;
+  std::cout << "\nSuccessfully exited" << std::endl;
 }

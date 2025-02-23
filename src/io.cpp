@@ -1,6 +1,10 @@
 #include "../include/io.h"
 
+#ifdef _WIN32
+#else
 #include <termios.h>
+#endif
+
 #include <unistd.h>
 
 #include <iostream>
@@ -9,11 +13,13 @@
 #include "../include/inputLine.h"
 #include "../include/result.h"
 
-using namespace std;
+static bool isSecondLine = false;
 
+#ifdef __linux__
 void setNonCanonicalMode(struct termios &initialSettings) {
   struct termios newSettings;
-  tcgetattr(STDIN_FILENO, &initialSettings);  // Get current terminal attributes
+  tcgetattr(STDIN_FILENO,
+            &initialSettings);  // Get current terminal attributes
   newSettings = initialSettings;
 
   newSettings.c_lflag &= ~(ICANON | ECHO);  // Disable canonical mode and echo
@@ -27,13 +33,12 @@ void restoreCanonicalMode(const struct termios &initialSettings) {
   tcsetattr(STDIN_FILENO, TCSANOW,
             &initialSettings);  // Restore initial settings
 }
+#endif
 
 bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
 
-static bool isSecondLine = false;
-
 void displayInput(const InputLine &inputLine, const ResultAsString &result) {
-  ostringstream out;
+  std::ostringstream out;
 
   if (!result.str.empty() && result.errMessage.empty()) {
     out << '\n' << CLEAR << GREY << stod(result.str) << WHITE << PREV_LINE;
@@ -51,11 +56,11 @@ void displayInput(const InputLine &inputLine, const ResultAsString &result) {
     out << CURSOR_LEFT;
   }
 
-  cout << out.str() << flush;
+  std::cout << out.str() << std::flush;
 }
 
 void displayError(const ResultAsString &result, size_t cursorIndex) {
-  ostringstream out;
+  std::ostringstream out;
 
   out << '\n' << CLEAR << GREY << result.errMessage << WHITE << PREV_LINE;
 
@@ -63,14 +68,14 @@ void displayError(const ResultAsString &result, size_t cursorIndex) {
     out << CURSOR_RIGHT;
   }
 
-  cout << out.str() << flush;
+  std::cout << out.str() << std::flush;
 }
 
-void displayResult(const string &result) {
+void displayResult(const std::string &result) {
   if (!result.empty()) {
-    cout << '\n'
-         << YELLOW << CLEAR << stod(result) << WHITE << '\n'
-         << ">  " << flush;
+    std::cout << '\n'
+              << YELLOW << CLEAR << stod(result) << WHITE << '\n'
+              << ">  " << std::flush;
   }
   isSecondLine = false;
 }

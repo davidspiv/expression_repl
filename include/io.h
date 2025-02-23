@@ -1,7 +1,11 @@
 #ifndef IO_H
 #define IO_H
 
+#ifdef _WIN32
+
+#else
 #include <termios.h>
+#endif
 
 #include <string>
 
