@@ -5,11 +5,7 @@
 
 #include <unistd.h>
 
-#include <iostream>
-#include <sstream>
-
-#include "../include/inputLine.h"
-#include "../include/io.h"
+#include "../include/_math.h"
 #include "../include/result.h"
 
 #ifdef __linux__
@@ -33,3 +29,10 @@ void restoreCanonicalMode(const struct termios &initialSettings) {
 #endif
 
 bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
+
+bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
+
+bool isDisplayable(char ch) {
+  return isNumeric(ch) || isalpha(ch) || opRank.count(std::string(1, ch)) ||
+         ch == ')' || ch == ' ';
+}

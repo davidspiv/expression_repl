@@ -6,8 +6,7 @@
 
 #include "../include/result.h"
 #include "../include/token.h"
-
-bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
+#include "../include/ioHelpers.h"
 
 // Determine if '-' represent negation or subtraction
 bool isNegateOp(std::deque<Token> &tokens) {

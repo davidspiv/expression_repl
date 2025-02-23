@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "../include/inputLine.h"
+#include "../include/expression.h"
 #include "result.h"
 
 #define CLEAR "\033[0K"
@@ -23,6 +23,7 @@
 void setNonCanonicalMode(struct termios &initialSettings);
 void restoreCanonicalMode(const struct termios &initialSettings);
 bool readNextChar(char &ch);
-void displayInput(const InputLine &inputLine, const ResultAsString &result);
+bool isDisplayable(char ch);
+bool isNumeric(const char symbol);
 
 #endif

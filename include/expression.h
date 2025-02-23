@@ -1,12 +1,12 @@
-#ifndef INPUT_LINE_H
-#define INPUT_LINE_H
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 
 #include <string>
 
 #include "historyCache.h"
 #include "result.h"
 
-class InputLine {
+class Expression {
  private:
   size_t cursorIndex;
   std::string text;
@@ -16,29 +16,27 @@ class InputLine {
   bool isSecondLine;
 
  public:
-  InputLine()
+  Expression()
       : cursorIndex(0),
         text(""),
         result(""),
         errMessage(""),
         isSecondLine(false) {};
-  ~InputLine() {};
+  ~Expression() {};
 
   static HistoryCache historyCache;
 
   size_t getCursorIndex() const;
   std::string getText() const;
   void setText(const std::string &text);
-  void erase();
+  void backspace();
   void insert(char ch);
   void reset();
-  void newExpression();
-  void displayResult();
-  bool isError();
 
-  void displayInput();
-  void handleResult(const std::string &err);
-  bool isDisplayable(char ch);
+  void createExpression();
+  void displayFinalResult();
+  bool isError();
+  void displayInput(const std::string &err);
   void handleChar(const char ch);
   void updateExpression(char ch);
 };

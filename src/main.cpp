@@ -3,15 +3,15 @@
 #include <termios.h>
 #endif
 
-#include "../include/historyCache.h"
-#include "../include/io.h"
+#include "../include/expression.h"
+#include "../include/ioHelpers.h"
 
 int main() {
 #ifndef _WIN32
   struct termios terminalSettings;
 #endif
 
-  InputLine inputLine;
+  Expression inputLine;
 
   std::cout << "Enter Expression. Type 'exit' to quit." << "\n>  "
             << std::flush;
@@ -21,8 +21,8 @@ int main() {
 #endif
 
   while (inputLine.getText() != "exit") {
-    inputLine.newExpression();
-    inputLine.displayResult();
+    inputLine.createExpression();
+    inputLine.displayFinalResult();
   }
 
 #ifndef _WIN32
