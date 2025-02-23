@@ -31,19 +31,8 @@ bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
 
 static bool isSecondLine = false;
 
-void displayInput(const string &input, size_t cursorIndex) {
-  ostringstream out;
-
-  out << '\r' << CLEAR << ">  " << input;
-
-  for (size_t i = 0; i < input.size() - cursorIndex; i++) {
-    out << CURSOR_LEFT;
-  }
-
-  cout << out.str() << flush;
-}
-
-void displayTempResult(const StringResult &result, size_t cursorIndex) {
+void displayInput(const string &input, const StringResult &result,
+                  size_t cursorIndex) {
   ostringstream out;
 
   if (!result.str.empty() && result.errMessage.empty()) {
@@ -53,13 +42,13 @@ void displayTempResult(const StringResult &result, size_t cursorIndex) {
 
   } else if (isSecondLine) {
     out << '\n' << CLEAR << PREV_LINE;
-  } else {
-    return;  // don't display anything if nothings changed
   }
 
   for (size_t i = 0; i < cursorIndex + 3; i++) {
     out << CURSOR_RIGHT;
   }
+
+  out << '\r' << CLEAR << ">  " << input;
 
   cout << out.str() << flush;
 }
