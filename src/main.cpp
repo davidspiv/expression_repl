@@ -97,6 +97,8 @@ string handleInput(string& input) {
       if (!rpnResult.errMessage.empty()) continue;
 
       result = evalRpn(rpnResult.tokens);
+
+      if (!result.errMessage.empty()) continue;
     };
 
     displayTempResult(result, cursorIndex);

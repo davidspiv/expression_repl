@@ -19,8 +19,8 @@ StringResult evalRpn(std::deque<Token> &rpn) {
 
     // handle unary operators
     if (result.empty()) {
-      return {0, "invalid expression involving operator \"" +
-                     token.getSymbol() + "\"."};
+      return {"", "invalid expression involving operator \"" +
+                      token.getSymbol() + "\"."};
     }
     const double operandB = result.top();
     result.pop();
@@ -38,8 +38,8 @@ StringResult evalRpn(std::deque<Token> &rpn) {
 
     // handle binary operators
     if (result.empty()) {
-      return {0, "invalid expression involving operator \"" +
-                     token.getSymbol() + "\"."};
+      return {"", "invalid expression involving operator \"" +
+                      token.getSymbol() + "\"."};
     }
 
     const double operandA = result.top();
