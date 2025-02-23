@@ -32,8 +32,6 @@ class InputLine {
   void erase();
   void insert(char ch);
   void reset();
-  void operator++();
-  void operator--();
   void newExpression();
   void displayResult();
   bool isError();

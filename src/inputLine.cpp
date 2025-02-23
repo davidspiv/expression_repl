@@ -45,16 +45,6 @@ void InputLine::reset() {
   isSecondLine = false;
 }
 
-void InputLine::operator++() {
-  ++cursorIndex;
-  return;
-};
-
-void InputLine::operator--() {
-  --cursorIndex;
-  return;
-};
-
 void InputLine::displayResult() {
   std::ostringstream out;
 
