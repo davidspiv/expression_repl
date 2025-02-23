@@ -14,8 +14,6 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
-static HistoryCache historyCache;
-
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(std::string(1, ch)) ||
          ch == ')' || ch == ' ';
@@ -36,13 +34,13 @@ void handleChar(const char ch, InputLine &inputLine) {
     switch (escCode) {
       case 72:  // up arrow
         std::cout << "hello!";
-        historyCache.moveBackward();
-        inputLine.setText(historyCache.getCurrent());
+        InputLine::historyCache.moveBackward();
+        inputLine.setText(InputLine::historyCache.getCurrent());
         break;
 
       case 80:  // down arrow
-        historyCache.moveForward();
-        inputLine.setText(historyCache.getCurrent());
+        InputLine::historyCache.moveForward();
+        inputLine.setText(InputLine::historyCache.getCurrent());
         break;
     }
 
@@ -58,13 +56,13 @@ void handleChar(const char ch, InputLine &inputLine) {
         escCode[0] == '[') {
       switch (escCode[1]) {
         case 'A':  // up arrow
-          historyCache.moveBackward();
-          inputLine.setText(historyCache.getCurrent());
+          InputLine::historyCache.moveBackward();
+          inputLine.setText(InputLine::historyCache.getCurrent());
           break;
 
         case 'B':  // down arrow
-          historyCache.moveForward();
-          inputLine.setText(historyCache.getCurrent());
+          InputLine::historyCache.moveForward();
+          inputLine.setText(InputLine::historyCache.getCurrent());
           break;
 
         case 'D':
@@ -130,34 +128,3 @@ ResultAsString updateExpression(char ch, InputLine &inputLine) {
   handleResult(inputLine, result);
   return result;
 }
-
-ResultAsString newExpression(InputLine &inputLine) {
-  char ch;
-  ResultAsString result;
-
-  inputLine.reset();
-
-  // TEST HISTORY
-  if (historyCache.empty()) {
-    historyCache.addEntry("1*1");
-    historyCache.addEntry("2*2");
-    historyCache.addEntry("3*3");
-  }
-
-  while (readNextChar(ch) && ch != '\n') {
-    result = updateExpression(ch, inputLine);
-  }
-
-  if (historyCache.isEnd() ||
-      historyCache.getCurrent() != inputLine.getText()) {
-    historyCache.addEntry(inputLine.getText());
-  }
-
-  if (!result.errMessage.empty()) {
-    displayError(inputLine, result);
-    return newExpression(inputLine);
-  }
-
-  historyCache.end();
-  return result;
-};

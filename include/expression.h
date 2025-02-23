@@ -4,6 +4,6 @@
 #include "inputLine.h"
 #include "result.h"
 
-ResultAsString newExpression(InputLine &inputLine);
+ResultAsString updateExpression(char ch, InputLine &inputLine);
 
 #endif

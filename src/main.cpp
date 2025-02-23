@@ -21,11 +21,10 @@ int main() {
   setNonCanonicalMode(terminalSettings);
 #endif
 
-  do {
-    const ResultAsString result = newExpression(inputLine);
-    displayResult(result.str);
-
-  } while (inputLine.getText() != "exit");
+  while (inputLine.getText() != "exit") {
+    inputLine.newExpression();
+    inputLine.displayResult();
+  }
 
 #ifndef _WIN32
   restoreCanonicalMode(terminalSettings);

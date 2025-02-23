@@ -58,24 +58,3 @@ void displayInput(const InputLine &inputLine, const ResultAsString &result) {
 
   std::cout << out.str() << std::flush;
 }
-
-void displayError(const InputLine &inputLine, const ResultAsString &result) {
-  std::ostringstream out;
-
-  out << '\n' << CLEAR << GREY << result.errMessage << WHITE << PREV_LINE;
-
-  for (size_t i = 0; i < inputLine.getCursorIndex() + 3; i++) {
-    out << CURSOR_RIGHT;
-  }
-
-  std::cout << out.str() << std::flush;
-}
-
-void displayResult(const std::string &result) {
-  if (!result.empty()) {
-    std::cout << '\n'
-              << YELLOW << CLEAR << stod(result) << WHITE << '\n'
-              << ">  " << std::flush;
-  }
-  isSecondLine = false;
-}
