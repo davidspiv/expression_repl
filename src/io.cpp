@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "../include/inputLine.h"
 #include "../include/result.h"
 
 using namespace std;
@@ -31,8 +32,7 @@ bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
 
 static bool isSecondLine = false;
 
-void displayInput(const string &input, const StringResult &result,
-                  size_t cursorIndex) {
+void displayInput(const InputLine &inputLine, const StringResult &result) {
   ostringstream out;
 
   if (!result.str.empty() && result.errMessage.empty()) {
@@ -44,9 +44,10 @@ void displayInput(const string &input, const StringResult &result,
     out << '\n' << CLEAR << PREV_LINE;
   }
 
-  out << '\r' << CLEAR << ">  " << input;
+  out << '\r' << CLEAR << ">  " << inputLine.getText();
 
-  for (size_t i = 0; i < input.length() - cursorIndex; i++) {
+  for (size_t i = 0;
+       i < inputLine.getText().length() - inputLine.getCursorIndex(); i++) {
     out << CURSOR_LEFT;
   }
 

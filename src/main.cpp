@@ -4,6 +4,7 @@
 
 #include "../include/evalRpn.h"
 #include "../include/historyCache.h"
+#include "../include/inputLine.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
 #include "../include/parser.h"
@@ -13,8 +14,7 @@
 using namespace std;
 
 static HistoryCache historyCache;
-static size_t cursorIndex = 0;
-static string input;
+InputLine inputLine;
 
 bool isDisplayable(char ch) {
   return isNumeric(ch) || isalpha(ch) || opRank.count(string(1, ch)) ||
@@ -23,7 +23,7 @@ bool isDisplayable(char ch) {
 
 void handleResult(StringResult &result, const string &errMessage = "") {
   result.errMessage = errMessage;
-  displayInput(input, result, cursorIndex);
+  displayInput(inputLine, result);
 };
 
 StringResult updateExpression(char ch) {
@@ -36,51 +36,47 @@ StringResult updateExpression(char ch) {
       switch (escCode[1]) {
         case 'A':  // up arrow
           historyCache.moveBackward();
-          input = historyCache.getCurrent();
-          cursorIndex = input.length();
+          inputLine.setText(historyCache.getCurrent());
           break;
 
         case 'B':  // down arrow
         {
           historyCache.moveForward();
-          input = historyCache.getCurrent();
-          cursorIndex = input.length();
+          inputLine.setText(historyCache.getCurrent());
         } break;
 
         case 'D':
-          if (cursorIndex) {
+          if (inputLine.getCursorIndex()) {
             cout << CURSOR_LEFT << flush;
-            cursorIndex--;
+            --inputLine;
           }
           break;
 
         case 'C':
-          if (cursorIndex < input.length()) {
+          if (inputLine.getCursorIndex() < inputLine.getText().length()) {
             cout << CURSOR_RIGHT << flush;
-            cursorIndex++;
+            ++inputLine;
           }
           break;
       }
     }
 
-  } else if (ch == 0x7F && cursorIndex) {  // handle backspace
+  } else if (ch == 0x7F && inputLine.getCursorIndex()) {  // handle backspace
     cout << "\b \b";
-    cursorIndex--;
-    input.erase(input.begin() + cursorIndex);
+    inputLine.erase();
 
   } else if (isDisplayable(ch)) {  // handle character to display
-    input.insert(cursorIndex, string(1, ch));
-    cursorIndex++;
+    inputLine.insert(ch);
   }
 
   StringResult result;
 
-  if (input.empty()) {
+  if (inputLine.getText().empty()) {
     handleResult(result, "empty input");
     return result;
   }
 
-  TokensResult algResult = lexer(input);
+  TokensResult algResult = lexer(inputLine.getText());
 
   if (!algResult.errMessage.empty()) {
     handleResult(result, algResult.errMessage);
@@ -103,6 +99,7 @@ StringResult updateExpression(char ch) {
 
   result = evalRpn(rpnResult.tokens);
 
+  //   inputLine.setCursorIndex(0);
   handleResult(result);
   return result;
 }
@@ -111,9 +108,7 @@ StringResult newExpression() {
   char ch;
   StringResult result;
 
-  if (!cursorIndex) {
-    input = "";
-  }
+  inputLine.reset();
 
   // TEST HISTORY
   if (historyCache.empty()) {
@@ -126,17 +121,17 @@ StringResult newExpression() {
     result = updateExpression(ch);
   }
 
-  if (historyCache.isEnd() || historyCache.getCurrent() != input) {
-    historyCache.addEntry(input);
+  if (historyCache.isEnd() ||
+      historyCache.getCurrent() != inputLine.getText()) {
+    historyCache.addEntry(inputLine.getText());
   }
 
   if (!result.errMessage.empty()) {
-    displayError(result, cursorIndex);
+    displayError(result, inputLine.getCursorIndex());
     return newExpression();
   }
 
   historyCache.end();
-  cursorIndex = 0;
   return result;
 };
 
@@ -151,7 +146,7 @@ int main() {
     const StringResult result = newExpression();
     displayResult(result.str);
 
-  } while (input != "exit");
+  } while (inputLine.getText() != "exit");
 
   restoreCanonicalMode(terminalSettings);
 
