@@ -10,7 +10,6 @@
 #include "../include/_math.h"
 #include "../include/expression.h"
 #include "../include/io.h"
-#include "../include/result.h"
 
 #ifdef __linux__
 void setNonCanonicalMode(struct termios &initialSettings) {
@@ -33,13 +32,6 @@ void restoreCanonicalMode(const struct termios &initialSettings) {
 #endif
 
 bool readNextChar(char &ch) { return read(STDIN_FILENO, &ch, 1) == 1; }
-
-bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
-
-bool isDisplayable(char ch) {
-  return isNumeric(ch) || isalpha(ch) || opRank.count(std::string(1, ch)) ||
-         ch == ')' || ch == ' ';
-}
 
 void updateDisplay(Expression &expression) {
   std::ostringstream out;
@@ -81,4 +73,9 @@ void displayResult(Expression &expression) {
   }
 
   std::cout << out.str() << std::flush;
+}
+
+bool isDisplayable(char ch) {
+  return isNumeric(ch) || isalpha(ch) || opRank.count(std::string(1, ch)) ||
+         ch == ')' || ch == ' ';
 }

@@ -1,12 +1,11 @@
 #include "../include/lexer.h"
 
 #include <deque>
-#include <iostream>
 #include <string>
 
+#include "../include/_math.h"
 #include "../include/result.h"
 #include "../include/token.h"
-#include "../include/io.h"
 
 // Determine if '-' represent negation or subtraction
 bool isNegateOp(std::deque<Token> &tokens) {

@@ -20,9 +20,8 @@
 void setNonCanonicalMode(struct termios &initialSettings);
 void restoreCanonicalMode(const struct termios &initialSettings);
 bool readNextChar(char &ch);
-bool isDisplayable(char ch);
-bool isNumeric(const char symbol);
 void displayResult(Expression &expression);
 void updateDisplay(Expression &expression);
+bool isDisplayable(char ch);
 
 #endif

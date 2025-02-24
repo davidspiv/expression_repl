@@ -7,6 +7,8 @@
 static double maxInt = std::numeric_limits<int>::max();
 static double minInt = std::numeric_limits<int>::min();
 
+bool isNumeric(const char symbol) { return isdigit(symbol) || symbol == '.'; }
+
 // Input limited by size of int
 int _floor(double input) {
   if (input > maxInt || input < minInt) {

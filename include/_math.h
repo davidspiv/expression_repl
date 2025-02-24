@@ -6,6 +6,8 @@
 
 #define M_PI 3.14159265358979323846
 
+bool isNumeric(const char symbol);
+
 int _floor(double input);
 
 const std::unordered_map<std::string, size_t> opRank = {
