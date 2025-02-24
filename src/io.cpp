@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include "../include/_math.h"
-#include "../include/expression.h"
+#include "../include/c_expression.h"
 #include "../include/io.h"
 
 bool isDisplayable(char ch) {
@@ -44,12 +44,15 @@ void displayResult(Expression &expression) {
   std::ostringstream out;
 
   if (expression.getErrMessage().size()) {
+    const size_t promptLength = 3;
+
     out << '\n'
         << CLEAR << GREY << expression.getErrMessage() << WHITE << PREV_LINE;
 
-    for (size_t i = 0; i < expression.getCursorIndex() + 3; i++) {
+    for (size_t i = 0; i < expression.getCursorIndex() + promptLength; i++) {
       out << CURSOR_RIGHT;
     }
+
   } else if (!expression.getResult().empty()) {
     out << '\n'
         << YELLOW << CLEAR << stod(expression.getResult()) << WHITE << '\n'
@@ -63,6 +66,7 @@ void displayResult(Expression &expression) {
 #ifdef __linux__
 void setNonCanonicalMode(struct termios &initialSettings) {
   struct termios newSettings;
+
   tcgetattr(STDIN_FILENO,
             &initialSettings);  // Get current terminal attributes
   newSettings = initialSettings;

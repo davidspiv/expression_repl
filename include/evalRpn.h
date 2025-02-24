@@ -3,8 +3,8 @@
 
 #include <deque>
 
+#include "c_token.h"
 #include "result.h"
-#include "token.h"
 
 ResultAsString evalRpn(const std::deque<Token> &rpn);
 

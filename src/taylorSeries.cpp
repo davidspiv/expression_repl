@@ -2,7 +2,7 @@
 #include <string>
 
 #include "../include/_math.h"
-#include "../include/token.h"
+#include "../include/c_token.h"
 
 void createFactorialCache(double *factorialCache, size_t iterations) {
   factorialCache[0] = 1;

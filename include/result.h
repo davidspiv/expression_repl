@@ -3,7 +3,7 @@
 #include <deque>
 #include <string>
 
-#include "token.h"
+#include "c_token.h"
 
 struct ResultAsTokens {
   std::deque<Token> tokens;

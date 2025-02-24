@@ -4,8 +4,8 @@
 #include <string>
 
 #include "../include/_math.h"
+#include "../include/c_token.h"
 #include "../include/result.h"
-#include "../include/token.h"
 
 // Determine if '-' represent negation or subtraction
 bool isNegateOp(std::deque<Token> &tokens) {

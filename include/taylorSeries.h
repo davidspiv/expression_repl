@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "token.h"
+#include "c_token.h"
 
 double taylorSeries(const Token &token, double radians);
 

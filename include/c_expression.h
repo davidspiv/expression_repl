@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "historyCache.h"
+#include "c_historyCache.h"
 #include "result.h"
 
 class Expression {

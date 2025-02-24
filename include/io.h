@@ -6,7 +6,7 @@
 #include <termios.h>
 #endif
 
-#include "../include/expression.h"
+#include "../include/c_expression.h"
 #include "result.h"
 
 #define CLEAR "\033[0K"

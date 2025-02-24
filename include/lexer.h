@@ -4,8 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "c_token.h"
 #include "result.h"
-#include "token.h"
 
 ResultAsTokens lexer(const std::string &input);
 

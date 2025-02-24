@@ -1,9 +1,9 @@
 
-#include "../include/expression.h"
+#include "../include/c_expression.h"
 
 #include <string>
 
-#include "../include/historyCache.h"
+#include "../include/c_historyCache.h"
 #include "../include/io.h"
 
 size_t Expression::getCursorIndex() const { return cursorIndex; }

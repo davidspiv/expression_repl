@@ -3,13 +3,13 @@
 #include <termios.h>
 #endif
 
+#include "../include/c_expression.h"
+#include "../include/c_historyCache.h"
+#include "../include/c_token.h"
 #include "../include/evalRpn.h"
-#include "../include/expression.h"
-#include "../include/historyCache.h"
 #include "../include/io.h"
 #include "../include/lexer.h"
 #include "../include/parser.h"
-#include "../include/token.h"
 
 int main() {
   struct termios terminalSettings;
@@ -58,7 +58,6 @@ int main() {
 
       ResultAsString resultAsString = evalRpn(rpnResult.tokens);
       expression.setResult(resultAsString.str);
-
       expression.setError(resultAsString.errMessage);
       updateDisplay(expression);
     }
@@ -67,8 +66,8 @@ int main() {
       historyCache.addEntry(expression.getInput());
     }
 
-    historyCache.end();
     displayResult(expression);
+    historyCache.end();
   }
 
   restoreCanonicalMode(terminalSettings);  // Unix only

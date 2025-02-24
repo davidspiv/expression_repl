@@ -3,9 +3,9 @@
 #include <stack>
 
 #include "../include/_math.h"
+#include "../include/c_token.h"
 #include "../include/result.h"
 #include "../include/taylorSeries.h"
-#include "../include/token.h"
 
 ResultAsString evalRpn(const std::deque<Token> &rpn) {
   std::stack<double> result;

@@ -3,8 +3,8 @@
 #include <stack>
 
 #include "../include/_math.h"
+#include "../include/c_token.h"
 #include "../include/result.h"
-#include "../include/token.h"
 
 size_t safePeekTop(std::stack<Token> &opStack) {
   if (!opStack.empty()) {
