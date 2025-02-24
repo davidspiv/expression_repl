@@ -48,14 +48,6 @@ int main() {
         continue;
       }
 
-      Token::Type lastTokenType = algResult.tokens.back().getType();
-
-      if (lastTokenType == Token::UnaryOp || lastTokenType == Token::BinaryOp) {
-        expression.setError("hanging operator");
-        updateDisplay(expression);
-        continue;
-      }
-
       ResultAsTokens rpnResult = parser(algResult.tokens);
 
       if (!rpnResult.errMessage.empty()) {
