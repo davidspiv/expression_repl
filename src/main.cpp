@@ -4,6 +4,7 @@
 #endif
 
 #include "../include/expression.h"
+#include "../include/historyCache.h"
 #include "../include/ioHelpers.h"
 
 int main() {
@@ -11,7 +12,9 @@ int main() {
   struct termios terminalSettings;
 #endif
 
-  Expression inputLine;
+  HistoryCache historyCache;
+
+  Expression expression;
 
   std::cout << "Enter Expression. Type 'exit' to quit." << "\n>  "
             << std::flush;
@@ -20,9 +23,27 @@ int main() {
   setNonCanonicalMode(terminalSettings);
 #endif
 
-  while (inputLine.getInput() != "exit") {
-    inputLine.createExpression();
-    inputLine.displayFinalResult();
+  while (expression.getInput() != "exit") {
+    char ch;
+
+    // TEST HISTORY
+    if (historyCache.empty()) {
+      historyCache.addEntry("1*1");
+      historyCache.addEntry("2*2");
+      historyCache.addEntry("3*3");
+    }
+
+    while (readNextChar(ch) && ch != '\n') {
+      expression.handleChar(ch, historyCache);
+    }
+
+    if (expression.getInputState() == Expression::InputState::INPUT) {
+      historyCache.addEntry(expression.getInput());
+    }
+
+    historyCache.end();
+
+    expression.displayFinalResult();
   }
 
 #ifndef _WIN32

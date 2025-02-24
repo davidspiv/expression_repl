@@ -11,15 +11,16 @@ class Expression {
   Expression() { this->reset(); };
   ~Expression() {};
 
+  enum InputState { INPUT, HISTORY };
+
   size_t getCursorIndex() const;
   std::string getInput() const;
-  void createExpression();  // controller
+  InputState getInputState() const;
+  void handleChar(const char ch, HistoryCache &historyCache);
   void displayFinalResult();
   bool isError() const;
 
  private:
-  static HistoryCache historyCache;
-  enum InputState { INPUT, HISTORY };
   InputState inputState;
 
   size_t cursorIndex;
@@ -32,10 +33,8 @@ class Expression {
  private:
   void setInput(const std::string &text);
   void backspace();
-  void update(char ch);
   void reset();
-  void displayInput(const std::string &err);
-  void handleChar(const char ch);
+  void updateDisplay(const std::string &err);
 };
 
 #endif

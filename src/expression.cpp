@@ -9,27 +9,16 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
-HistoryCache Expression::historyCache;
-
 size_t Expression::getCursorIndex() const { return cursorIndex; }
 
 std::string Expression::getInput() const { return input; }
+
+Expression::InputState Expression::getInputState() const { return inputState; }
 
 void Expression::setInput(const std::string &text) {
   input = text;
   cursorIndex = input.length();
 }
-
-void Expression::backspace() {
-  if (cursorIndex > input.length()) return;
-  --cursorIndex;
-  input.erase(input.begin() + cursorIndex);
-};
-
-void Expression::update(char ch) {
-  input.insert(cursorIndex, std::string(1, ch));
-  ++cursorIndex;
-};
 
 void Expression::reset() {
   inputState = INPUT;
@@ -41,9 +30,18 @@ void Expression::reset() {
   isSecondLine = false;
 }
 
+// removes a character from input line at cursor index
+void Expression::backspace() {
+  if (cursorIndex > input.length()) return;
+  --cursorIndex;
+  input.erase(input.begin() + cursorIndex);
+};
+
+// Checks for any errors that occurred during the evaluation process
 bool Expression::isError() const { return !errMessage.empty(); };
 
-void Expression::handleChar(const char ch) {
+// evaluates expression with additional char
+void Expression::handleChar(const char ch, HistoryCache &historyCache) {
 #ifdef _WIN32
   if (ch == 224) {  // handle ANSI escape sequence
 
@@ -61,7 +59,6 @@ void Expression::handleChar(const char ch) {
         input = Expression::historyCache.getCurrent();
         break;
     }
-
   } else if (isDisplayable(ch)) {  // handle character to display
     inputLine.insert(ch);
   }
@@ -112,49 +109,49 @@ void Expression::handleChar(const char ch) {
           break;
       }
     }
-
   } else if (ch == 0x7F && cursorIndex) {  // handle backspace
     std::cout << "\b \b";
     this->backspace();
 
   } else if (isDisplayable(ch)) {  // handle character to display
-    this->update(ch);
+    input.insert(cursorIndex, std::string(1, ch));
+    ++cursorIndex;
   }
 #endif
 
   if (input.empty()) {
-    displayInput("empty input");
+    updateDisplay("empty input");
     return;
   }
 
   ResultAsTokens algResult = lexer(input);
 
   if (!algResult.errMessage.empty()) {
-    displayInput(algResult.errMessage);
+    updateDisplay(algResult.errMessage);
     return;
   }
 
   Token::Type lastTokenType = algResult.tokens.back().getType();
 
   if (lastTokenType == Token::UnaryOp || lastTokenType == Token::BinaryOp) {
-    displayInput("hanging operator");
+    updateDisplay("hanging operator");
     return;
   }
 
   ResultAsTokens rpnResult = parser(algResult.tokens);
 
   if (!rpnResult.errMessage.empty()) {
-    displayInput(rpnResult.errMessage);
+    updateDisplay(rpnResult.errMessage);
     return;
   }
 
   ResultAsString resultAsString = evalRpn(rpnResult.tokens);
   result = resultAsString.str;
 
-  displayInput(resultAsString.errMessage);
+  updateDisplay(resultAsString.errMessage);
 }
 
-void Expression::displayInput(const std::string &err) {
+void Expression::updateDisplay(const std::string &err) {
   std::ostringstream out;
 
   errMessage = err;
@@ -163,7 +160,6 @@ void Expression::displayInput(const std::string &err) {
     out << '\n' << CLEAR << GREY << stod(result) << WHITE << PREV_LINE;
 
     isSecondLine = true;
-
   } else if (isSecondLine) {
     out << '\n' << CLEAR << PREV_LINE;
   }
@@ -186,7 +182,6 @@ void Expression::displayFinalResult() {
     for (size_t i = 0; i < cursorIndex + 3; i++) {
       out << CURSOR_RIGHT;
     }
-
   } else if (!result.empty()) {
     out << '\n' << YELLOW << CLEAR << stod(result) << WHITE << '\n' << ">  ";
     this->reset();
@@ -194,24 +189,3 @@ void Expression::displayFinalResult() {
 
   std::cout << out.str() << std::flush;
 }
-
-void Expression::createExpression() {
-  char ch;
-
-  // TEST HISTORY
-  if (this->historyCache.empty()) {
-    historyCache.addEntry("1*1");
-    historyCache.addEntry("2*2");
-    historyCache.addEntry("3*3");
-  }
-
-  while (readNextChar(ch) && ch != '\n') {
-    handleChar(ch);
-  }
-
-  if (historyCache.isLast()) {
-    historyCache.addEntry(input);
-  }
-
-  historyCache.end();
-};

@@ -2,12 +2,9 @@
 #define IO_H
 
 #ifdef _WIN32
-
 #else
 #include <termios.h>
 #endif
-
-#include <string>
 
 #include "../include/expression.h"
 #include "result.h"
