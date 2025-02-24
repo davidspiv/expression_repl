@@ -7,6 +7,8 @@
 
 class HistoryCache {
  public:
+  HistoryCache() : history(), iter(history.end()) {};
+  ~HistoryCache() {};
   void addEntry(const std::string& entry);
 
   void moveForward();
@@ -15,7 +17,7 @@ class HistoryCache {
 
   void end();
 
-  bool isEnd();
+  bool isLast();
 
   bool isBeginning();
 
@@ -25,7 +27,7 @@ class HistoryCache {
 
  private:
   std::list<std::string> history;
-  std::list<std::string>::iterator iter = history.end();
+  std::list<std::string>::iterator iter;
 };
 
 #endif

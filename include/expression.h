@@ -15,7 +15,7 @@ class Expression {
   std::string getInput() const;
   void createExpression();  // controller
   void displayFinalResult();
-  bool isError();
+  bool isError() const;
 
  private:
   static HistoryCache historyCache;

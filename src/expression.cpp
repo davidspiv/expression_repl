@@ -41,6 +41,8 @@ void Expression::reset() {
   isSecondLine = false;
 }
 
+bool Expression::isError() const { return !errMessage.empty(); };
+
 void Expression::handleChar(const char ch) {
 #ifdef _WIN32
   if (ch == 224) {  // handle ANSI escape sequence
@@ -75,14 +77,8 @@ void Expression::handleChar(const char ch) {
           if (inputState == INPUT) {
             inputState = HISTORY;
             savedInput = input;
-
-            if (!historyCache.isEnd()) {
-              historyCache.moveBackward();
-            }
-          } else {
-            historyCache.moveBackward();
           }
-
+          historyCache.moveBackward();
           this->setInput(historyCache.getCurrent());
           break;
 
@@ -90,9 +86,10 @@ void Expression::handleChar(const char ch) {
 
           if (inputState == INPUT) return;
 
-          if (historyCache.isEnd()) {
+          if (historyCache.isLast()) {
             inputState = INPUT;
             this->setInput(savedInput);
+            historyCache.moveForward();  // reset iter
           } else {
             historyCache.moveForward();
             this->setInput(historyCache.getCurrent());
@@ -198,8 +195,6 @@ void Expression::displayFinalResult() {
   std::cout << out.str() << std::flush;
 }
 
-bool Expression::isError() { return !errMessage.empty(); };
-
 void Expression::createExpression() {
   char ch;
 
@@ -214,7 +209,7 @@ void Expression::createExpression() {
     handleChar(ch);
   }
 
-  if (historyCache.isEnd() || historyCache.getCurrent() != input) {
+  if (historyCache.isLast()) {
     historyCache.addEntry(input);
   }
 

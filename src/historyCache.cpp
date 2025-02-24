@@ -9,7 +9,7 @@ void HistoryCache::addEntry(const std::string& entry) {
 }
 
 void HistoryCache::moveForward() {
-  if (iter != std::prev(history.end()) && iter != history.end()) {
+  if (iter != history.end()) {
     ++iter;
   }
 }
@@ -22,12 +22,13 @@ void HistoryCache::moveBackward() {
 
 void HistoryCache::end() { iter = history.end(); }
 
-bool HistoryCache::isEnd() { return iter == std::prev(history.end()); }
+bool HistoryCache::isLast() { return iter == std::prev(history.end()); }
 
 bool HistoryCache::isBeginning() { return iter == history.begin(); }
 
 bool HistoryCache::empty() { return history.empty(); }
 
+// PROBLEM HERE
 std::string HistoryCache::getCurrent() const {
   return history.empty() ? "" : *iter;
 }
