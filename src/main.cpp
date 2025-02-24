@@ -3,25 +3,23 @@
 #include <termios.h>
 #endif
 
+#include "../include/evalRpn.h"
 #include "../include/expression.h"
 #include "../include/historyCache.h"
-#include "../include/ioHelpers.h"
+#include "../include/io.h"
+#include "../include/lexer.h"
+#include "../include/parser.h"
+#include "../include/token.h"
 
 int main() {
-#ifndef _WIN32
   struct termios terminalSettings;
-#endif
-
   HistoryCache historyCache;
-
   Expression expression;
+
+  setNonCanonicalMode(terminalSettings);  // Unix only
 
   std::cout << "Enter Expression. Type 'exit' to quit." << "\n>  "
             << std::flush;
-
-#ifndef _WIN32
-  setNonCanonicalMode(terminalSettings);
-#endif
 
   while (expression.getInput() != "exit") {
     char ch;
@@ -34,7 +32,43 @@ int main() {
     }
 
     while (readNextChar(ch) && ch != '\n') {
-      expression.handleChar(ch, historyCache);
+      if (!expression.handleChar(ch, historyCache)) continue;
+
+      if (expression.getInput().empty()) {
+        expression.setError("empty input");
+        updateDisplay(expression);
+        continue;
+      }
+
+      ResultAsTokens algResult = lexer(expression.getInput());
+
+      if (!algResult.errMessage.empty()) {
+        expression.setError(algResult.errMessage);
+        updateDisplay(expression);
+        continue;
+      }
+
+      Token::Type lastTokenType = algResult.tokens.back().getType();
+
+      if (lastTokenType == Token::UnaryOp || lastTokenType == Token::BinaryOp) {
+        expression.setError("hanging operator");
+        updateDisplay(expression);
+        continue;
+      }
+
+      ResultAsTokens rpnResult = parser(algResult.tokens);
+
+      if (!rpnResult.errMessage.empty()) {
+        expression.setError(rpnResult.errMessage);
+        updateDisplay(expression);
+        continue;
+      }
+
+      ResultAsString resultAsString = evalRpn(rpnResult.tokens);
+      expression.setResult(resultAsString.str);
+
+      expression.setError(resultAsString.errMessage);
+      updateDisplay(expression);
     }
 
     if (expression.getInputState() == Expression::InputState::INPUT) {
@@ -42,13 +76,10 @@ int main() {
     }
 
     historyCache.end();
-
-    expression.displayFinalResult();
+    displayResult(expression);
   }
 
-#ifndef _WIN32
-  restoreCanonicalMode(terminalSettings);
-#endif
+  restoreCanonicalMode(terminalSettings);  // Unix only
 
   std::cout << "\nSuccessfully exited" << std::endl;
 }

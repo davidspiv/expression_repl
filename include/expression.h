@@ -16,9 +16,15 @@ class Expression {
   size_t getCursorIndex() const;
   std::string getInput() const;
   InputState getInputState() const;
-  void handleChar(const char ch, HistoryCache &historyCache);
-  void displayFinalResult();
+  std::string getResult() const;
+  std::string getErrMessage() const;
+  bool handleChar(const char ch, HistoryCache &historyCache);
+  void setResult(const std::string &result);
+  void setError(const std::string &errMessage);
   bool isError() const;
+  void reset();
+
+  bool isSecondLine;
 
  private:
   InputState inputState;
@@ -28,13 +34,10 @@ class Expression {
   std::string savedInput;
   std::string result;
   std::string errMessage;
-  bool isSecondLine;
 
  private:
   void setInput(const std::string &text);
   void backspace();
-  void reset();
-  void updateDisplay(const std::string &err);
 };
 
 #endif

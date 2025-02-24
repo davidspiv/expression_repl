@@ -1,13 +1,9 @@
 #include "../include/expression.h"
 
-#include <sstream>
 #include <string>
 
-#include "../include/evalRpn.h"
 #include "../include/historyCache.h"
-#include "../include/ioHelpers.h"
-#include "../include/lexer.h"
-#include "../include/parser.h"
+#include "../include/io.h"
 
 size_t Expression::getCursorIndex() const { return cursorIndex; }
 
@@ -15,10 +11,22 @@ std::string Expression::getInput() const { return input; }
 
 Expression::InputState Expression::getInputState() const { return inputState; }
 
+std::string Expression::getResult() const { return result; }
+
+std::string Expression::getErrMessage() const { return errMessage; }
+
 void Expression::setInput(const std::string &text) {
   input = text;
   cursorIndex = input.length();
 }
+
+void Expression::setResult(const std::string &result) {
+  this->result = result;
+};
+
+void Expression::setError(const std::string &errMessage) {
+  this->errMessage = errMessage;
+};
 
 void Expression::reset() {
   inputState = INPUT;
@@ -41,7 +49,7 @@ void Expression::backspace() {
 bool Expression::isError() const { return !errMessage.empty(); };
 
 // evaluates expression with additional char
-void Expression::handleChar(const char ch, HistoryCache &historyCache) {
+bool Expression::handleChar(const char ch, HistoryCache &historyCache) {
 #ifdef _WIN32
   if (ch == 224) {  // handle ANSI escape sequence
 
@@ -81,7 +89,7 @@ void Expression::handleChar(const char ch, HistoryCache &historyCache) {
 
         case 'B':  // down arrow
 
-          if (inputState == INPUT) return;
+          if (inputState == INPUT) return false;
 
           if (historyCache.isLast()) {
             inputState = INPUT;
@@ -118,74 +126,5 @@ void Expression::handleChar(const char ch, HistoryCache &historyCache) {
     ++cursorIndex;
   }
 #endif
-
-  if (input.empty()) {
-    updateDisplay("empty input");
-    return;
-  }
-
-  ResultAsTokens algResult = lexer(input);
-
-  if (!algResult.errMessage.empty()) {
-    updateDisplay(algResult.errMessage);
-    return;
-  }
-
-  Token::Type lastTokenType = algResult.tokens.back().getType();
-
-  if (lastTokenType == Token::UnaryOp || lastTokenType == Token::BinaryOp) {
-    updateDisplay("hanging operator");
-    return;
-  }
-
-  ResultAsTokens rpnResult = parser(algResult.tokens);
-
-  if (!rpnResult.errMessage.empty()) {
-    updateDisplay(rpnResult.errMessage);
-    return;
-  }
-
-  ResultAsString resultAsString = evalRpn(rpnResult.tokens);
-  result = resultAsString.str;
-
-  updateDisplay(resultAsString.errMessage);
-}
-
-void Expression::updateDisplay(const std::string &err) {
-  std::ostringstream out;
-
-  errMessage = err;
-
-  if (!result.empty() && errMessage.empty()) {
-    out << '\n' << CLEAR << GREY << stod(result) << WHITE << PREV_LINE;
-
-    isSecondLine = true;
-  } else if (isSecondLine) {
-    out << '\n' << CLEAR << PREV_LINE;
-  }
-
-  out << '\r' << CLEAR << ">  " << input;
-
-  for (size_t i = 0; i < input.length() - cursorIndex; i++) {
-    out << CURSOR_LEFT;
-  }
-
-  std::cout << out.str() << std::flush;
-}
-
-void Expression::displayFinalResult() {
-  std::ostringstream out;
-
-  if (errMessage.size()) {
-    out << '\n' << CLEAR << GREY << errMessage << WHITE << PREV_LINE;
-
-    for (size_t i = 0; i < cursorIndex + 3; i++) {
-      out << CURSOR_RIGHT;
-    }
-  } else if (!result.empty()) {
-    out << '\n' << YELLOW << CLEAR << stod(result) << WHITE << '\n' << ">  ";
-    this->reset();
-  }
-
-  std::cout << out.str() << std::flush;
+  return true;
 }
