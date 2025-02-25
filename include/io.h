@@ -9,6 +9,7 @@
 #include "../include/c_expression.h"
 #include "result.h"
 
+// Some of these are not compatible with ANSI.SYS
 #define CLEAR "\033[0K"
 #define GREY "\033[38;5;8m"
 #define YELLOW "\033[33m"

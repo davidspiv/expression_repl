@@ -2,6 +2,9 @@
 #else
 #include <termios.h>
 #endif
+#include <unistd.h>
+
+#include <csignal>
 
 #include "../include/c_expression.h"
 #include "../include/c_historyCache.h"
@@ -11,10 +14,20 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
+struct termios terminalSettings;
+
+// handles Ctrl+C gracefully
+void sigIntHandler(int) {
+  restoreCanonicalMode(terminalSettings);  // Unix only
+  std::cout << "\nSuccessfully exited";
+  exit(0);
+}
+
 int main() {
-  struct termios terminalSettings;
   HistoryCache historyCache;
   Expression expression;
+
+  signal(SIGINT, sigIntHandler);
 
   setNonCanonicalMode(terminalSettings);  // Unix only
 
@@ -57,8 +70,9 @@ int main() {
       }
 
       ResultAsString resultAsString = evalRpn(rpnResult.tokens);
-      expression.setResult(resultAsString.str);
+
       expression.setError(resultAsString.errMessage);
+      expression.setResult(resultAsString.str);
       updateDisplay(expression);
     }
 

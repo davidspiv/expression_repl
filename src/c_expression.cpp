@@ -1,4 +1,3 @@
-
 #include "../include/c_expression.h"
 
 #include <string>

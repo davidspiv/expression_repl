@@ -22,6 +22,7 @@ ResultAsString evalRpn(const std::deque<Token> &rpn) {
       return {"", "invalid expression involving operator \"" +
                       token.getSymbol() + "\"."};
     }
+
     const double operandB = result.top();
     result.pop();
 
@@ -59,7 +60,7 @@ ResultAsString evalRpn(const std::deque<Token> &rpn) {
 
     } else if (token.getSymbol() == "/") {
       if (!operandB) {
-        throw std::invalid_argument("unable to divide by zero.");
+        return {"", "unable to divide by zero."};
       }
       result.push(operandA / operandB);
     }

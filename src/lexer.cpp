@@ -66,6 +66,8 @@ ResultAsTokens lexer(const std::string &input) {
     }
   }
 
+  if (valueBuff == ".") return {tokens, "solo decimal"};
+
   if (!valueBuff.empty()) {
     tokens.push_back(Token(valueBuff, Token::Value));
   }

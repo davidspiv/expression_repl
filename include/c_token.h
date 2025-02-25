@@ -12,7 +12,6 @@ class Token {
   Type type;
 
  public:
-  Token() : symbol(""), type(Null) {};
   Token(const std::string &a, const Type &b) : symbol(a), type(b) {};
   ~Token() {};
 

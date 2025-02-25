@@ -10,19 +10,11 @@ class HistoryCache {
   HistoryCache() : history(), iter(history.end()) {};
   ~HistoryCache() {};
   void addEntry(const std::string& entry);
-
   void moveForward();
-
   void moveBackward();
-
   void end();
-
   bool isLast();
-
-  bool isBeginning();
-
   std::string getCurrent() const;
-
   bool empty();
 
  private:
